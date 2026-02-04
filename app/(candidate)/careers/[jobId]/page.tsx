@@ -10,19 +10,33 @@ import {
   ArrowLeft, 
   ArrowRight,
   CheckCircle,
-  Building
+  Building,
+  Loader2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import PageContainer from '@/components/layout/PageContainer';
-import { mockJobs } from '@/data/mockData';
+import { useJob } from '@/hooks/useApi';
 
 export default function JobDetailsPage() {
   const params = useParams();
   const jobId = params?.jobId as string;
-  const job = mockJobs.find((j) => j.id === jobId);
+  const { data: job, isLoading, error } = useJob(jobId);
 
-  if (!job) {
+  if (isLoading) {
+    return (
+      <PageContainer>
+        <div className="container-custom section-padding flex items-center justify-center">
+          <div className="text-center">
+            <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
+            <p className="text-muted-foreground">Loading job details...</p>
+          </div>
+        </div>
+      </PageContainer>
+    );
+  }
+
+  if (error || !job) {
     return (
       <PageContainer>
         <div className="container-custom section-padding text-center">
@@ -54,11 +68,11 @@ export default function JobDetailsPage() {
       <section className="bg-hero-gradient py-12 md:py-16">
         <div className="container-custom">
           <Link
-            href="/careers"
-            className="inline-flex items-center text-white/80 hover:text-white mb-6 transition-colors"
+            href={`/careers/${job._id}`}
+            className="inline-flex items-center text-white/80 hover:text-white mb-4 transition-colors"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Careers
+            Back to Job Details
           </Link>
 
           <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
@@ -85,7 +99,7 @@ export default function JobDetailsPage() {
                 </div>
                 <div className="flex items-center gap-2">
                   <Clock className="w-5 h-5" />
-                  <span>Posted {job.postedAt}</span>
+                  <span>Posted {new Date(job.createdAt).toLocaleDateString()}</span>
                 </div>
                 {job.salary && (
                   <div className="flex items-center gap-2">
@@ -96,8 +110,8 @@ export default function JobDetailsPage() {
               </div>
             </div>
 
-            <Button size="lg" className="bg-white text-primary hover:bg-gray-100 shrink-0">
-              <Link href={`/careers/${job.id}/apply`} className="flex items-center">
+            <Button size="lg" variant="hero" className="bg-white text-primary hover:bg-gray-100 shrink-0">
+              <Link href={`/careers/${job._id}/apply`} className="flex items-center">
                 Apply Now
                 <ArrowRight className="w-5 h-5 ml-2" />
               </Link>
@@ -171,7 +185,7 @@ export default function JobDetailsPage() {
                     Apply now and take the first step towards joining our team.
                   </p>
                   <Button size="lg" className="w-full" asChild>
-                    <Link href={`/careers/${job.id}/apply`} className="flex items-center justify-center">
+                    <Link href={`/careers/${job._id}/apply`} className="flex items-center justify-center">
                       <Briefcase className="w-4 h-4 mr-2" />
                       Apply for this Job
                     </Link>

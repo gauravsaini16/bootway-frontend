@@ -37,7 +37,6 @@ const Footer = () => {
               {[
                 { name: "Home", path: "/" },
                 { name: "Careers", path: "/careers" },
-                { name: "My Applications", path: "/my-applications" },
                 { name: "About Us", path: "/" },
               ].map((link) => (
                 <li key={link.name}>
@@ -60,15 +59,14 @@ const Footer = () => {
                 { name: "HR Login", path: "/admin/login" },
                 { name: "Dashboard", path: "/admin/dashboard" },
                 { name: "Manage Jobs", path: "/admin/jobs" },
-                { name: "Applications", path: "/admin/applications" },
               ].map((link) => (
                 <li key={link.name}>
-                  <Link
+                  <a
                     href={link.path}
                     className="text-primary-foreground/70 hover:text-primary-foreground transition-colors text-sm"
                   >
                     {link.name}
-                  </Link>
+                  </a>
                 </li>
               ))}
             </ul>

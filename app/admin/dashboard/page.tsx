@@ -15,23 +15,96 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import PageContainer from '@/components/layout/PageContainer';
 import StatsCard from '@/components/admin/StatsCard';
 import StatusBadge from '@/components/common/StatusBadge';
-import { dashboardStats, mockApplications, mockInterviews } from '@/data/mockData';
+import { useApplications, useInterviews, useUsers } from '@/hooks/useApi';
+import { useAuthContext } from '@/contexts/AuthContext';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 export default function AdminDashboard() {
-  const recentApplications = mockApplications.slice(0, 5);
-  const upcomingInterviews = mockInterviews.filter((i) => i.status === 'scheduled').slice(0, 3);
+  const { isAuthenticated, isLoading, user, logout } = useAuthContext();
+  const router = useRouter();
+
+  // Always call hooks at the top level (Rules of Hooks)
+  const { data: applications = [] } = useApplications({ limit: 5 });
+  const { data: interviews = [] } = useInterviews({ status: 'scheduled', limit: 3 });
+  const { data: users = [] } = useUsers({ role: 'candidate' });
+
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    console.log('Admin Dashboard - Auth state:', {
+      isAuthenticated,
+      isLoading,
+      user: user?.email,
+      userRole: user?.role
+    });
+    
+    if (!isLoading && !isAuthenticated) {
+      console.log('Admin Dashboard - Redirecting to login...');
+      router.push('/admin/login');
+    }
+  }, [isAuthenticated, isLoading, router]);
+
+  const handleLogout = () => {
+    logout();
+    // Force redirect after logout to ensure proper logout
+    setTimeout(() => {
+      window.location.href = '/admin/login';
+    }, 100);
+  };
+
+  // Show loading state while checking authentication
+  if (isLoading) {
+    return (
+      <PageContainer>
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+            <p className="text-muted-foreground">Loading...</p>
+          </div>
+        </div>
+      </PageContainer>
+    );
+  }
+
+  // Don't render content if not authenticated
+  if (!isAuthenticated) {
+    return null;
+  }
+
+  // Calculate dashboard stats
+  const dashboardStats = {
+    totalApplications: applications.length,
+    shortlisted: applications.filter(app => app.status === 'shortlisted').length,
+    interviews: interviews.filter(int => int.status === 'scheduled').length,
+    selected: applications.filter(app => app.status === 'offer').length,
+    activeEmployees: users.filter(user => user.isActive).length,
+  };
+
+  const recentApplications = applications.slice(0, 5);
+  const upcomingInterviews = interviews.filter((i) => i.status === 'scheduled').slice(0, 3);
 
   return (
     <PageContainer>
       {/* Header */}
       <section className="bg-hero-gradient py-8 md:py-10">
         <div className="container-custom">
-          <h1 className="text-2xl md:text-3xl font-bold text-white mb-2">
-            HR Dashboard
-          </h1>
-          <p className="text-white/80">
-            Welcome back! Here&apos;s an overview of your recruitment pipeline.
-          </p>
+          <div className="flex justify-between items-start">
+            <div>
+              <h1 className="text-2xl md:text-3xl font-bold text-white mb-2">
+                HR Dashboard
+              </h1>
+              <p className="text-white/80">
+                Welcome back, {user?.fullName || 'Admin'}! Here&apos;s an overview of your recruitment pipeline.
+              </p>
+            </div>
+            <Button 
+              variant="outline" 
+              onClick={handleLogout}
+              className="bg-white/10 border-white/20 text-white hover:bg-white/20"
+            >
+              Logout
+            </Button>
+          </div>
         </div>
       </section>
 
@@ -89,7 +162,7 @@ export default function AdminDashboard() {
                 <div className="space-y-4">
                   {recentApplications.map((app) => (
                     <div
-                      key={app.id}
+                      key={app._id}
                       className="flex items-center justify-between p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors"
                     >
                       <div className="flex-1 min-w-0">
@@ -97,10 +170,10 @@ export default function AdminDashboard() {
                           {app.candidateName}
                         </p>
                         <p className="text-sm text-muted-foreground truncate">
-                          {app.jobTitle}
+                          {app.job?.title || 'Job Title'}
                         </p>
                       </div>
-                      <StatusBadge status={app.status} />
+                      <StatusBadge status={app.status as any} />
                     </div>
                   ))}
                 </div>
@@ -123,7 +196,7 @@ export default function AdminDashboard() {
                   <div className="space-y-4">
                     {upcomingInterviews.map((interview) => (
                       <div
-                        key={interview.id}
+                        key={interview._id}
                         className="flex items-center gap-4 p-3 rounded-lg bg-muted/50"
                       >
                         <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
@@ -131,14 +204,17 @@ export default function AdminDashboard() {
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="font-medium text-foreground truncate">
-                            {interview.candidateName}
+                            {interview.candidate?.fullName || 'Candidate Name'}
                           </p>
                           <p className="text-sm text-muted-foreground">
-                            {new Date(interview.date).toLocaleDateString('en-IN', {
+                            {new Date(interview.scheduledDate).toLocaleDateString('en-IN', {
                               day: 'numeric',
                               month: 'short',
                             })}{' '}
-                            at {interview.time}
+                            at {new Date(interview.scheduledDate).toLocaleTimeString('en-IN', {
+                              hour: '2-digit',
+                              minute: '2-digit',
+                            })}
                           </p>
                         </div>
                         <Button variant="outline" size="sm">

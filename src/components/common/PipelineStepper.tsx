@@ -18,6 +18,7 @@ interface PipelineStepperProps {
 const PipelineStepper = ({ currentStep, isRejected = false, className }: PipelineStepperProps) => {
   const allSteps = [
     { id: "applied", label: "Applied" },
+    { id: "under-review", label: "Under Review" },
     { id: "screening", label: "Screening" },
     { id: "shortlisted", label: "Shortlisted" },
     { id: "interview", label: "Interview" },
