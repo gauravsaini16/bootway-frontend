@@ -4,10 +4,12 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import PageContainer from '@/components/layout/PageContainer';
-import { mockInterviews } from '@/data/mockData';
-import { ArrowLeft, Calendar } from 'lucide-react';
+import { useInterviews } from '@/hooks/useApi';
+import { ArrowLeft, Calendar, Loader2 } from 'lucide-react';
 
 export default function AdminInterviews() {
+  const { data: interviews = [], isLoading, error } = useInterviews();
+
   return (
     <PageContainer>
       <section className="bg-hero-gradient py-8 md:py-10">
@@ -31,27 +33,58 @@ export default function AdminInterviews() {
 
       <section className="section-padding bg-muted/30">
         <div className="container-custom">
-          <div className="space-y-4">
-            {mockInterviews.map((interview) => (
-              <Card key={interview.id}>
-                <CardContent className="p-6">
-                  <div className="flex items-center gap-4">
-                    <Calendar className="w-8 h-8 text-primary" />
-                    <div className="flex-1">
-                      <h3 className="font-semibold text-foreground">{interview.candidateName}</h3>
-                      <p className="text-sm text-muted-foreground">{interview.jobTitle}</p>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        {interview.date} at {interview.time}
-                      </p>
+          {isLoading ? (
+            <div className="flex items-center justify-center py-8">
+              <Loader2 className="h-8 w-8 animate-spin" />
+            </div>
+          ) : error ? (
+            <div className="text-center py-8 text-muted-foreground">
+              Error loading interviews. Please try again.
+            </div>
+          ) : interviews.length === 0 ? (
+            <div className="text-center py-8 text-muted-foreground">
+              No interviews scheduled yet.
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {interviews.map((interview) => (
+                <Card key={interview._id}>
+                  <CardContent className="p-6">
+                    <div className="flex items-center gap-4">
+                      <Calendar className="w-8 h-8 text-primary" />
+                      <div className="flex-1">
+                        <h3 className="font-semibold text-foreground">
+                          {interview.candidate?.fullName || 'Candidate Name'}
+                        </h3>
+                        <p className="text-sm text-muted-foreground">
+                          {interview.job?.title || 'Job Title'}
+                        </p>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          {interview.scheduledDate ? 
+                            new Date(interview.scheduledDate).toLocaleDateString('en-IN', {
+                              day: 'numeric',
+                              month: 'short',
+                              year: 'numeric',
+                            }) + ' at ' + 
+                            new Date(interview.scheduledDate).toLocaleTimeString('en-IN', {
+                              hour: '2-digit',
+                              minute: '2-digit',
+                            })
+                            : 'Date not set'
+                          }
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-sm font-medium text-muted-foreground capitalize">
+                          {interview.status}
+                        </p>
+                      </div>
                     </div>
-                    <div className="text-right">
-                      <p className="text-sm font-medium text-muted-foreground">{interview.status}</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
         </div>
       </section>
     </PageContainer>

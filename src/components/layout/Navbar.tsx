@@ -14,13 +14,11 @@ const Navbar = () => {
   const candidateLinks = [
     { name: "Home", path: "/" },
     { name: "Careers", path: "/careers" },
-    { name: "My Applications", path: "/my-applications" },
   ];
 
   const adminLinks = [
     { name: "Dashboard", path: "/admin/dashboard" },
     { name: "Jobs", path: "/admin/jobs" },
-    { name: "Applications", path: "/admin/applications" },
     { name: "Interviews", path: "/admin/interviews" },
     { name: "Offers", path: "/admin/offers" },
     { name: "Employees", path: "/admin/employees" },

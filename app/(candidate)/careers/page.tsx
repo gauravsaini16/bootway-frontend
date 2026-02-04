@@ -13,11 +13,12 @@ import {
 } from '@/components/ui/select';
 import PageContainer from '@/components/layout/PageContainer';
 import JobCard from '@/components/candidate/JobCard';
-import { mockJobs } from '@/data/mockData';
+import { useJobs } from '@/hooks/useApi';
+import { Job as JobType } from '@/services/apiService';
 
-const departments = ['All Departments', 'Engineering', 'Product', 'Design', 'Sales'];
+const departments = ['All Departments', 'Engineering', 'Product', 'Design', 'Sales', 'Marketing', 'HR', 'Finance'];
 const types = ['All Types', 'Full Time', 'Part Time', 'Contract', 'Internship'];
-const locations = ['All Locations', 'Bangalore, India', 'Remote', 'Mumbai, India'];
+const locations = ['All Locations', 'Bangalore, India', 'Remote', 'Mumbai, India', 'Delhi, India'];
 
 export default function Careers() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -25,7 +26,19 @@ export default function Careers() {
   const [jobType, setJobType] = useState('All Types');
   const [location, setLocation] = useState('All Locations');
 
-  const filteredJobs = mockJobs.filter((job) => {
+  // Build filters object
+  const filters = {
+    search: searchQuery || undefined,
+    department: department === 'All Departments' ? undefined : department,
+    type: jobType === 'All Types' ? undefined : jobType.toLowerCase().replace(' ', '-'),
+    location: location === 'All Locations' ? undefined : location,
+  };
+
+  // Fetch jobs using React Query
+  const { data: jobs = [], isLoading, error } = useJobs(filters);
+
+  // Filter jobs on frontend for additional safety
+  const filteredJobs = jobs.filter((job: JobType) => {
     const matchesSearch =
       job.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       job.description.toLowerCase().includes(searchQuery.toLowerCase());
@@ -37,7 +50,7 @@ export default function Careers() {
     const matchesLocation =
       location === 'All Locations' || job.location === location;
 
-    return matchesSearch && matchesDepartment && matchesType && matchesLocation && job.status === 'active';
+    return matchesSearch && matchesDepartment && matchesType && matchesLocation && job.isActive;
   });
 
   return (
@@ -127,30 +140,48 @@ export default function Careers() {
 
           {filteredJobs.length > 0 ? (
             <div className="space-y-4">
-              {filteredJobs.map((job) => (
-                <JobCard key={job.id} {...job} />
+              {filteredJobs.map((job: JobType) => (
+                <JobCard 
+                  key={job._id} 
+                  id={job._id}
+                  title={job.title}
+                  department={job.department}
+                  location={job.location}
+                  type={job.type}
+                  salary={job.salary}
+                  postedAt={new Date(job.createdAt).toLocaleDateString('en-US', { 
+                    month: 'short', 
+                    day: 'numeric',
+                    year: 'numeric'
+                  })}
+                  description={job.description}
+                />
               ))}
             </div>
           ) : (
             <div className="text-center py-16">
               <Briefcase className="w-12 h-12 text-muted-foreground mx-auto mb-4 opacity-50" />
               <h3 className="text-lg font-semibold text-foreground mb-2">
-                No Jobs Found
+                {isLoading ? 'Loading Jobs...' : error ? 'Error loading jobs' : 'No Jobs Found'}
               </h3>
               <p className="text-muted-foreground mb-6">
-                Try adjusting your search criteria to find more opportunities.
+                {isLoading ? 'Please wait while we fetch the latest opportunities.' : 
+                 error ? 'There was an error loading jobs. Please try again later.' :
+                 'Try adjusting your search criteria to find more opportunities.'}
               </p>
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setSearchQuery('');
-                  setDepartment('All Departments');
-                  setJobType('All Types');
-                  setLocation('All Locations');
-                }}
-              >
-                Reset Filters
-              </Button>
+              {!isLoading && !error && (
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setSearchQuery('');
+                    setDepartment('All Departments');
+                    setJobType('All Types');
+                    setLocation('All Locations');
+                  }}
+                >
+                  Reset Filters
+                </Button>
+              )}
             </div>
           )}
         </div>

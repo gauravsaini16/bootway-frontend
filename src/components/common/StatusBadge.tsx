@@ -2,6 +2,7 @@ import { cn } from "@/lib/utils";
 
 type StatusType = 
   | "applied" 
+  | "under-review" 
   | "screening" 
   | "shortlisted" 
   | "interview" 
@@ -21,6 +22,10 @@ const statusConfig: Record<StatusType, { label: string; className: string }> = {
   applied: {
     label: "Applied",
     className: "bg-info/10 text-info border-info/20",
+  },
+  "under-review": {
+    label: "Under Review",
+    className: "bg-warning/10 text-warning border-warning/20",
   },
   screening: {
     label: "Screening",
