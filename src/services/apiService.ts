@@ -249,20 +249,38 @@ export const applicationsService = {
     candidateName: string;
     candidateEmail: string;
     candidatePhone?: string;
-    resume?: string;
+    resume?: File;
     coverLetter?: string;
   }) {
-    // Use direct fetch for public endpoint without auth
-    // Don't send candidateId since it's optional for public applications
+    // Use FormData for file uploads
+    const formData = new FormData();
+    
+    // Add all fields to FormData
+    formData.append('jobId', applicationData.jobId);
+    formData.append('candidateName', applicationData.candidateName);
+    formData.append('candidateEmail', applicationData.candidateEmail);
+    if (applicationData.candidatePhone) {
+      formData.append('candidatePhone', applicationData.candidatePhone);
+    }
+    if (applicationData.coverLetter) {
+      formData.append('coverLetter', applicationData.coverLetter);
+    }
+    
+    // Add file if provided
+    if (applicationData.resume) {
+      formData.append('resume', applicationData.resume);
+    }
+
+    // Debug FormData contents
+    console.log('📤 FormData contents being sent:');
+    for (let [key, value] of formData.entries()) {
+      console.log(`  ${key}:`, value instanceof File ? `File(${value.name}, ${value.size} bytes, ${value.type})` : value);
+    }
+
     const response = await fetch(`${API_CONFIG.BASE_URL}${API_ENDPOINTS.APPLICATIONS.CREATE}`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        ...applicationData,
-        // Backend will set candidateId to null for public applications
-      }),
+      // Don't set Content-Type header - let browser set it with boundary for FormData
+      body: formData,
     });
 
     const responseText = await response.text();

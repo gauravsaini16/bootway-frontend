@@ -72,7 +72,7 @@ export default function JobApplicationForm({ jobId }: JobApplicationFormProps) {
         candidateName: formData.fullName,
         candidateEmail: formData.email,
         candidatePhone: formData.phone,
-        resume: formData.resume?.name || '',
+        resume: formData.resume, // Send actual File object
         coverLetter: formData.coverLetter,
       });
       
