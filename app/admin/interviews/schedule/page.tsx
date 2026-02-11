@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import PageContainer from '@/components/layout/PageContainer';
-import { ArrowLeft, Calendar, Clock, MapPin, Video, Users, Phone } from 'lucide-react';
+import { ArrowLeft, Calendar, Clock, MapPin, Video, Users, Phone, Loader2 } from 'lucide-react';
 import {
     Select,
     SelectContent,
@@ -20,7 +20,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { getApplicationById, scheduleInterview } from '@/lib/apiClient'; // We need to expose scheduleInterview
 import { toast } from 'sonner';
 
-export default function ScheduleInterview() {
+function ScheduleInterviewForm() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const applicationId = searchParams?.get('applicationId');
@@ -40,6 +40,23 @@ export default function ScheduleInterview() {
     });
 
     useEffect(() => {
+        const fetchApplicationDetails = async () => {
+            try {
+                if (!applicationId) return;
+                const response = await getApplicationById(applicationId);
+                if (response.success && response.data) {
+                    setApplication(response.data);
+                } else {
+                    toast.error('Failed to load application details');
+                }
+            } catch (error) {
+                console.error('Error fetching application:', error);
+                toast.error('Error loading application details');
+            } finally {
+                setIsFetchingApp(false);
+            }
+        };
+
         if (applicationId) {
             fetchApplicationDetails();
         } else {
@@ -47,23 +64,6 @@ export default function ScheduleInterview() {
             toast.error('No application selected');
         }
     }, [applicationId]);
-
-    const fetchApplicationDetails = async () => {
-        try {
-            if (!applicationId) return;
-            const response = await getApplicationById(applicationId);
-            if (response.success && response.data) {
-                setApplication(response.data);
-            } else {
-                toast.error('Failed to load application details');
-            }
-        } catch (error) {
-            console.error('Error fetching application:', error);
-            toast.error('Error loading application details');
-        } finally {
-            setIsFetchingApp(false);
-        }
-    };
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
@@ -299,5 +299,17 @@ export default function ScheduleInterview() {
                 </div>
             </section>
         </PageContainer>
+    );
+}
+
+export default function ScheduleInterview() {
+    return (
+        <Suspense fallback={
+            <div className="min-h-screen flex items-center justify-center bg-muted/30 p-4">
+                <Loader2 className="w-8 h-8 animate-spin text-primary" />
+            </div>
+        }>
+            <ScheduleInterviewForm />
+        </Suspense>
     );
 }

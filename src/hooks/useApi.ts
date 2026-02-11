@@ -451,7 +451,7 @@ export const useHealthCheck = () => {
   });
 };
 
-export default {
+const apiHooks = {
   // Auth
   useAuth,
 
@@ -494,3 +494,5 @@ export default {
   // System
   useHealthCheck,
 };
+
+export default apiHooks;

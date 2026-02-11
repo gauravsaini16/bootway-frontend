@@ -42,7 +42,7 @@ export default function AdminDashboard() {
       console.log('Admin Dashboard - Redirecting to login...');
       router.push('/admin/login');
     }
-  }, [isAuthenticated, isLoading, router]);
+  }, [isAuthenticated, isLoading, router, user]);
 
   const handleLogout = () => {
     logout();

@@ -131,7 +131,7 @@ export default function JobApplicationForm({ jobId }: JobApplicationFormProps) {
               Application Submitted!
             </DialogTitle>
             <DialogDescription className="text-center">
-              Thank you for applying to the {job.title} position. We'll review
+              Thank you for applying to the {job.title} position. We&apos;ll review
               your application and get back to you soon.
             </DialogDescription>
           </DialogHeader>

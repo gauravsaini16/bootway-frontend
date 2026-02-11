@@ -90,39 +90,39 @@ export default function EditJob() {
     const [currentBenefit, setCurrentBenefit] = useState('');
 
     useEffect(() => {
+        const fetchJobDetails = async () => {
+            try {
+                const response = await getJobById(jobId);
+                if (response.success && response.data) {
+                    const job = response.data;
+                    setFormData({
+                        title: job.title || '',
+                        department: job.department || '',
+                        location: job.location || '',
+                        type: job.type || '',
+                        salary: job.salary || '',
+                        description: job.description || '',
+                        skills: job.skills || [],
+                        requirements: job.requirements || [],
+                        responsibilities: job.responsibilities || [],
+                        benefits: job.benefits || [],
+                    });
+                } else {
+                    alert('Failed to fetch job details');
+                    router.push('/admin/jobs');
+                }
+            } catch (error) {
+                console.error('Error fetching job:', error);
+                alert('Error loading job details');
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
         if (jobId) {
             fetchJobDetails();
         }
-    }, [jobId]);
-
-    const fetchJobDetails = async () => {
-        try {
-            const response = await getJobById(jobId);
-            if (response.success && response.data) {
-                const job = response.data;
-                setFormData({
-                    title: job.title || '',
-                    department: job.department || '',
-                    location: job.location || '',
-                    type: job.type || '',
-                    salary: job.salary || '',
-                    description: job.description || '',
-                    skills: job.skills || [],
-                    requirements: job.requirements || [],
-                    responsibilities: job.responsibilities || [],
-                    benefits: job.benefits || [],
-                });
-            } else {
-                alert('Failed to fetch job details');
-                router.push('/admin/jobs');
-            }
-        } catch (error) {
-            console.error('Error fetching job:', error);
-            alert('Error loading job details');
-        } finally {
-            setIsLoading(false);
-        }
-    };
+    }, [jobId, router]);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;

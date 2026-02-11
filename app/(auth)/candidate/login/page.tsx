@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Eye, EyeOff, Lock, Mail, ArrowLeft, Loader2 } from 'lucide-react';
@@ -11,7 +11,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useAuthContext } from '@/contexts/AuthContext';
 
-export default function CandidateLoginPage() {
+function CandidateLoginForm() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const redirect = searchParams?.get('redirect') || '/careers';
@@ -155,5 +155,17 @@ export default function CandidateLoginPage() {
                 </Card>
             </div>
         </div>
+    );
+}
+
+export default function CandidateLoginPage() {
+    return (
+        <Suspense fallback={
+            <div className="min-h-screen flex items-center justify-center bg-muted/30 p-4">
+                <Loader2 className="w-8 h-8 animate-spin text-primary" />
+            </div>
+        }>
+            <CandidateLoginForm />
+        </Suspense>
     );
 }

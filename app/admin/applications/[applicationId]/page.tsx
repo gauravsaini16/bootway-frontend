@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -37,13 +37,7 @@ export default function ApplicationDetails() {
     const [status, setStatus] = useState('');
     const [isSaving, setIsSaving] = useState(false);
 
-    useEffect(() => {
-        if (applicationId) {
-            fetchApplication();
-        }
-    }, [applicationId]);
-
-    const fetchApplication = async () => {
+    const fetchApplication = useCallback(async () => {
         try {
             const response = await getApplicationById(applicationId);
             if (response.success && response.data) {
@@ -59,7 +53,13 @@ export default function ApplicationDetails() {
         } finally {
             setIsLoading(false);
         }
-    };
+    }, [applicationId, router]);
+
+    useEffect(() => {
+        if (applicationId) {
+            fetchApplication();
+        }
+    }, [applicationId, fetchApplication]);
 
     const handleStatusUpdate = async () => {
         setIsSaving(true);

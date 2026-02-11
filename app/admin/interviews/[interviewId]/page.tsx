@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -36,13 +36,7 @@ export default function InterviewDetails() {
     const [notes, setNotes] = useState('');
     const [isSaving, setIsSaving] = useState(false);
 
-    useEffect(() => {
-        if (interviewId) {
-            fetchInterview();
-        }
-    }, [interviewId]);
-
-    const fetchInterview = async () => {
+    const fetchInterview = useCallback(async () => {
         try {
             const response = await getInterviewById(interviewId);
             if (response.success && response.data) {
@@ -59,7 +53,13 @@ export default function InterviewDetails() {
         } finally {
             setIsLoading(false);
         }
-    };
+    }, [interviewId, router]);
+
+    useEffect(() => {
+        if (interviewId) {
+            fetchInterview();
+        }
+    }, [interviewId, fetchInterview]);
 
     const handleUpdate = async () => {
         setIsSaving(true);
