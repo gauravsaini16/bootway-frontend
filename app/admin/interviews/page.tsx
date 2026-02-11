@@ -48,40 +48,42 @@ export default function AdminInterviews() {
           ) : (
             <div className="space-y-4">
               {interviews.map((interview) => (
-                <Card key={interview._id}>
-                  <CardContent className="p-6">
-                    <div className="flex items-center gap-4">
-                      <Calendar className="w-8 h-8 text-primary" />
-                      <div className="flex-1">
-                        <h3 className="font-semibold text-foreground">
-                          {interview.candidate?.fullName || 'Candidate Name'}
-                        </h3>
-                        <p className="text-sm text-muted-foreground">
-                          {interview.job?.title || 'Job Title'}
-                        </p>
-                        <p className="text-xs text-muted-foreground mt-1">
-                          {interview.scheduledDate ? 
-                            new Date(interview.scheduledDate).toLocaleDateString('en-IN', {
-                              day: 'numeric',
-                              month: 'short',
-                              year: 'numeric',
-                            }) + ' at ' + 
-                            new Date(interview.scheduledDate).toLocaleTimeString('en-IN', {
-                              hour: '2-digit',
-                              minute: '2-digit',
-                            })
-                            : 'Date not set'
-                          }
-                        </p>
+                <Link key={interview._id} href={`/admin/interviews/${interview._id}`} className="block transition-transform hover:scale-[1.01]">
+                  <Card className="hover:shadow-md transition-shadow cursor-pointer">
+                    <CardContent className="p-6">
+                      <div className="flex items-center gap-4">
+                        <Calendar className="w-8 h-8 text-primary" />
+                        <div className="flex-1">
+                          <h3 className="font-semibold text-foreground">
+                            {(interview.candidateId as any)?.fullName || (interview.applicationId as any)?.candidateName || 'Candidate Name'}
+                          </h3>
+                          <p className="text-sm text-muted-foreground">
+                            {(interview.jobId as any)?.title || 'Job Title'}
+                          </p>
+                          <p className="text-xs text-muted-foreground mt-1">
+                            {interview.scheduledDate ?
+                              new Date(interview.scheduledDate).toLocaleDateString('en-IN', {
+                                day: 'numeric',
+                                month: 'short',
+                                year: 'numeric',
+                              }) + ' at ' +
+                              new Date(interview.scheduledDate).toLocaleTimeString('en-IN', {
+                                hour: '2-digit',
+                                minute: '2-digit',
+                              })
+                              : 'Date not set'
+                            }
+                          </p>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-sm font-medium text-muted-foreground capitalize">
+                            {interview.status}
+                          </p>
+                        </div>
                       </div>
-                      <div className="text-right">
-                        <p className="text-sm font-medium text-muted-foreground capitalize">
-                          {interview.status}
-                        </p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                    </CardContent>
+                  </Card>
+                </Link>
               ))}
             </div>
           )}

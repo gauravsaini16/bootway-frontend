@@ -1,14 +1,14 @@
 'use client';
 
 import Link from 'next/link';
-import { 
-  Users, 
-  Briefcase, 
-  Calendar, 
-  CheckCircle, 
-  UserCheck, 
+import {
+  Users,
+  Briefcase,
+  Calendar,
+  CheckCircle,
+  UserCheck,
   ArrowRight,
-  TrendingUp 
+  TrendingUp
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -25,7 +25,7 @@ export default function AdminDashboard() {
   const router = useRouter();
 
   // Always call hooks at the top level (Rules of Hooks)
-  const { data: applications = [] } = useApplications({ limit: 5 });
+  const { data: applications = [] } = useApplications({});
   const { data: interviews = [] } = useInterviews({ status: 'scheduled', limit: 3 });
   const { data: users = [] } = useUsers({ role: 'candidate' });
 
@@ -37,7 +37,7 @@ export default function AdminDashboard() {
       user: user?.email,
       userRole: user?.role
     });
-    
+
     if (!isLoading && !isAuthenticated) {
       console.log('Admin Dashboard - Redirecting to login...');
       router.push('/admin/login');
@@ -76,7 +76,7 @@ export default function AdminDashboard() {
     totalApplications: applications.length,
     shortlisted: applications.filter(app => app.status === 'shortlisted').length,
     interviews: interviews.filter(int => int.status === 'scheduled').length,
-    selected: applications.filter(app => app.status === 'offer').length,
+    selected: applications.filter(app => app.status === 'selected').length,
     activeEmployees: users.filter(user => user.isActive).length,
   };
 
@@ -97,8 +97,8 @@ export default function AdminDashboard() {
                 Welcome back, {user?.fullName || 'Admin'}! Here&apos;s an overview of your recruitment pipeline.
               </p>
             </div>
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               onClick={handleLogout}
               className="bg-white/10 border-white/20 text-white hover:bg-white/20"
             >
@@ -204,7 +204,7 @@ export default function AdminDashboard() {
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="font-medium text-foreground truncate">
-                            {interview.candidate?.fullName || 'Candidate Name'}
+                            {(interview.candidateId as any)?.fullName || (interview.applicationId as any)?.candidateName || 'Candidate Name'}
                           </p>
                           <p className="text-sm text-muted-foreground">
                             {new Date(interview.scheduledDate).toLocaleDateString('en-IN', {

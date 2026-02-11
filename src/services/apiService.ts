@@ -57,7 +57,7 @@ export interface Application {
   candidatePhone?: string;
   resume?: string;
   coverLetter?: string;
-  status: 'applied' | 'under-review' | 'shortlisted' | 'rejected' | 'interview' | 'offer';
+  status: 'applied' | 'under-review' | 'shortlisted' | 'rejected' | 'interview' | 'offer' | 'selected';
   appliedAt: string;
   reviewedAt?: string;
   reviewedBy?: string;
@@ -254,7 +254,7 @@ export const applicationsService = {
   }) {
     // Use FormData for file uploads
     const formData = new FormData();
-    
+
     // Add all fields to FormData
     formData.append('jobId', applicationData.jobId);
     formData.append('candidateName', applicationData.candidateName);
@@ -265,7 +265,7 @@ export const applicationsService = {
     if (applicationData.coverLetter) {
       formData.append('coverLetter', applicationData.coverLetter);
     }
-    
+
     // Add file if provided
     if (applicationData.resume) {
       formData.append('resume', applicationData.resume);

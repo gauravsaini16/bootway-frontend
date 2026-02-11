@@ -22,6 +22,50 @@ import { createJob } from '@/lib/apiClient';
 const departments = ['Engineering', 'Product', 'Design', 'Marketing', 'Sales', 'HR', 'Finance'];
 const jobTypes = ['full-time', 'part-time', 'contract', 'internship'];
 
+const ListItem = ({ label, items, current, setter, onAdd, onRemove }: any) => (
+  <div className="space-y-2">
+    <Label>{label}</Label>
+    <div className="flex gap-2">
+      <Input
+        placeholder={`Add ${label.toLowerCase()}`}
+        value={current}
+        onChange={(e) => setter(e.target.value)}
+        onKeyPress={(e) => {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            onAdd();
+          }
+        }}
+      />
+      <Button
+        type="button"
+        variant="outline"
+        size="sm"
+        onClick={onAdd}
+      >
+        <Plus className="w-4 h-4" />
+      </Button>
+    </div>
+    <div className="flex flex-wrap gap-2">
+      {items.map((item: string, index: number) => (
+        <div
+          key={index}
+          className="flex items-center gap-2 px-3 py-1 bg-primary/10 text-primary rounded-full text-sm"
+        >
+          {item}
+          <button
+            type="button"
+            onClick={() => onRemove(index)}
+            className="ml-1 hover:text-destructive"
+          >
+            <X className="w-3 h-3" />
+          </button>
+        </div>
+      ))}
+    </div>
+  </div>
+);
+
 export default function PostJob() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
@@ -67,7 +111,7 @@ export default function PostJob() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Validation
     if (!formData.title || !formData.department || !formData.location || !formData.type) {
       alert('Please fill in all required fields');
@@ -97,12 +141,12 @@ export default function PostJob() {
         status: 'active',
         isActive: true
       };
-      
+
       console.log('📤 Sending job payload to backend:', jobPayload);
-      
+
       const result = await createJob(jobPayload);
 
-      console.log('✅ Job creation response:', result);      if (result.success) {
+      console.log('✅ Job creation response:', result); if (result.success) {
         alert('Job posted successfully!');
         router.push('/admin/jobs');
       } else {
@@ -117,49 +161,7 @@ export default function PostJob() {
     }
   };
 
-  const ListItem = ({ label, items, current, setter, onAdd, onRemove }: any) => (
-    <div className="space-y-2">
-      <Label>{label}</Label>
-      <div className="flex gap-2">
-        <Input
-          placeholder={`Add ${label.toLowerCase()}`}
-          value={current}
-          onChange={(e) => setter(e.target.value)}
-          onKeyPress={(e) => {
-            if (e.key === 'Enter') {
-              e.preventDefault();
-              onAdd();
-            }
-          }}
-        />
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          onClick={onAdd}
-        >
-          <Plus className="w-4 h-4" />
-        </Button>
-      </div>
-      <div className="flex flex-wrap gap-2">
-        {items.map((item: string, index: number) => (
-          <div
-            key={index}
-            className="flex items-center gap-2 px-3 py-1 bg-primary/10 text-primary rounded-full text-sm"
-          >
-            {item}
-            <button
-              type="button"
-              onClick={() => onRemove(index)}
-              className="ml-1 hover:text-destructive"
-            >
-              <X className="w-3 h-3" />
-            </button>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
+
 
   return (
     <PageContainer>
@@ -196,7 +198,7 @@ export default function PostJob() {
                 {/* Basic Information */}
                 <div className="space-y-4">
                   <h3 className="font-semibold text-lg">Basic Information</h3>
-                  
+
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="title">Job Title *</Label>
@@ -281,7 +283,7 @@ export default function PostJob() {
                 {/* Skills & Requirements */}
                 <div className="space-y-4">
                   <h3 className="font-semibold text-lg">Skills & Requirements</h3>
-                  
+
                   <ListItem
                     label="Required Skills *"
                     items={formData.skills}

@@ -11,7 +11,7 @@ export const queryKeys = {
   auth: {
     current: ['auth', 'current'] as const,
   },
-  
+
   // Jobs queries
   jobs: {
     all: ['jobs'] as const,
@@ -20,7 +20,7 @@ export const queryKeys = {
     details: () => [...queryKeys.jobs.all, 'detail'] as const,
     detail: (id: string) => [...queryKeys.jobs.details(), id] as const,
   },
-  
+
   // Applications queries
   applications: {
     all: ['applications'] as const,
@@ -31,7 +31,7 @@ export const queryKeys = {
     my: () => [...queryKeys.applications.all, 'my'] as const,
     byJob: (jobId: string) => [...queryKeys.applications.all, 'job', jobId] as const,
   },
-  
+
   // Interviews queries
   interviews: {
     all: ['interviews'] as const,
@@ -41,7 +41,7 @@ export const queryKeys = {
     detail: (id: string) => [...queryKeys.interviews.details(), id] as const,
     my: () => [...queryKeys.interviews.all, 'my'] as const,
   },
-  
+
   // Offers queries
   offers: {
     all: ['offers'] as const,
@@ -51,7 +51,7 @@ export const queryKeys = {
     detail: (id: string) => [...queryKeys.offers.details(), id] as const,
     my: () => [...queryKeys.offers.all, 'my'] as const,
   },
-  
+
   // Users queries
   users: {
     all: ['users'] as const,
@@ -86,14 +86,14 @@ const defaultMutationOptions = {
 // Auth Hooks
 export const useAuth = () => {
   const queryClient = useQueryClient();
-  
+
   const getCurrentUserQuery = useQuery<User, APIError>({
     queryKey: queryKeys.auth.current,
     queryFn: () => apiService.auth.getCurrentUser().then(res => res.data),
     enabled: apiService.auth.isAuthenticated(),
     ...defaultQueryOptions,
   });
-  
+
   const loginMutation = useMutation({
     mutationFn: ({ email, password }: { email: string; password: string }) =>
       apiService.auth.login(email, password),
@@ -103,7 +103,7 @@ export const useAuth = () => {
     },
     ...defaultMutationOptions,
   });
-  
+
   const registerMutation = useMutation({
     mutationFn: (userData: any) => apiService.auth.register(userData),
     onSuccess: () => {
@@ -111,17 +111,18 @@ export const useAuth = () => {
     },
     ...defaultMutationOptions,
   });
-  
+
   const updatePasswordMutation = useMutation({
     mutationFn: (passwordData: any) => apiService.auth.updatePassword(passwordData),
     ...defaultMutationOptions,
   });
-  
+
   const logout = () => {
     apiService.auth.logout();
+    queryClient.setQueryData(queryKeys.auth.current, null);
     queryClient.clear();
   };
-  
+
   return {
     user: getCurrentUserQuery.data,
     isLoading: getCurrentUserQuery.isLoading,
@@ -159,7 +160,7 @@ export const useJob = (id: string, options?: UseQueryOptions<Job, APIError>) => 
 
 export const useCreateJob = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: (jobData: any) => apiService.jobs.createJob(jobData),
     onSuccess: () => {
@@ -171,7 +172,7 @@ export const useCreateJob = () => {
 
 export const useUpdateJob = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: ({ id, jobData }: { id: string; jobData: any }) =>
       apiService.jobs.updateJob(id, jobData),
@@ -185,7 +186,7 @@ export const useUpdateJob = () => {
 
 export const useDeleteJob = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: (id: string) => apiService.jobs.deleteJob(id),
     onSuccess: () => {
@@ -197,7 +198,7 @@ export const useDeleteJob = () => {
 
 export const useToggleJobStatus = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: (id: string) => apiService.jobs.toggleJobStatus(id),
     onSuccess: (_, id) => {
@@ -250,7 +251,7 @@ export const useJobApplications = (jobId: string, options?: UseQueryOptions<Appl
 
 export const useApplyForJob = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: (applicationData: any) => apiService.applications.applyForJob(applicationData),
     onSuccess: () => {
@@ -264,7 +265,7 @@ export const useApplyForJob = () => {
 
 export const useUpdateApplication = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: ({ id, updateData }: { id: string; updateData: any }) =>
       apiService.applications.updateApplication(id, updateData),
@@ -309,7 +310,7 @@ export const useMyInterviews = (options?: UseQueryOptions<Interview[], APIError>
 
 export const useScheduleInterview = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: (interviewData: any) => apiService.interviews.scheduleInterview(interviewData),
     onSuccess: () => {
@@ -322,7 +323,7 @@ export const useScheduleInterview = () => {
 
 export const useUpdateInterview = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: ({ id, updateData }: { id: string; updateData: any }) =>
       apiService.interviews.updateInterview(id, updateData),
@@ -367,7 +368,7 @@ export const useMyOffers = (options?: UseQueryOptions<Offer[], APIError>) => {
 
 export const useCreateOffer = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: (offerData: any) => apiService.offers.createOffer(offerData),
     onSuccess: () => {
@@ -380,7 +381,7 @@ export const useCreateOffer = () => {
 
 export const useUpdateOffer = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: ({ id, updateData }: { id: string; updateData: any }) =>
       apiService.offers.updateOffer(id, updateData),
@@ -415,7 +416,7 @@ export const useUser = (id: string, options?: UseQueryOptions<User, APIError>) =
 
 export const useCreateUser = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: (userData: any) => apiService.users.createUser(userData),
     onSuccess: () => {
@@ -427,7 +428,7 @@ export const useCreateUser = () => {
 
 export const useUpdateUser = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: ({ id, userData }: { id: string; userData: any }) =>
       apiService.users.updateUser(id, userData),
@@ -453,7 +454,7 @@ export const useHealthCheck = () => {
 export default {
   // Auth
   useAuth,
-  
+
   // Jobs
   useJobs,
   useJob,
@@ -461,7 +462,7 @@ export default {
   useUpdateJob,
   useDeleteJob,
   useToggleJobStatus,
-  
+
   // Applications
   useApplications,
   useApplication,
@@ -469,27 +470,27 @@ export default {
   useJobApplications,
   useApplyForJob,
   useUpdateApplication,
-  
+
   // Interviews
   useInterviews,
   useInterview,
   useMyInterviews,
   useScheduleInterview,
   useUpdateInterview,
-  
+
   // Offers
   useOffers,
   useOffer,
   useMyOffers,
   useCreateOffer,
   useUpdateOffer,
-  
+
   // Users
   useUsers,
   useUser,
   useCreateUser,
   useUpdateUser,
-  
+
   // System
   useHealthCheck,
 };

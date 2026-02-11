@@ -10,7 +10,6 @@ export default function AdminLayout({
 }) {
   const pathname = usePathname();
   const router = useRouter();
-  const isLoginPage = pathname === '/admin/login';
 
   return (
     <div className="flex flex-col min-h-screen">

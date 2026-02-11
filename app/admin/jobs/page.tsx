@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import PageContainer from '@/components/layout/PageContainer';
 import { ArrowLeft, Plus } from 'lucide-react';
-import { getJobs } from '@/lib/apiClient';
+import { getJobs, toggleJobStatus } from '@/lib/apiClient';
 
 interface Job {
   _id: string;
@@ -34,6 +34,17 @@ export default function AdminJobs() {
       console.error('Error fetching jobs:', error);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleToggleStatus = async (jobId: string) => {
+    try {
+      await toggleJobStatus(jobId);
+      // Refresh list
+      fetchJobs();
+    } catch (error) {
+      console.error('Error toggling job status:', error);
+      alert('Failed to update job status');
     }
   };
 
@@ -94,17 +105,14 @@ export default function AdminJobs() {
                       {job.salary && <p>💰 {job.salary}</p>}
                     </div>
                     <div className="flex gap-2">
-                      <Button variant="outline" size="sm" className="flex-1">
-                        Edit
+                      <Button asChild variant="outline" size="sm" className="flex-1">
+                        <Link href={`/admin/jobs/${job._id}`}>Edit</Link>
                       </Button>
-                      <Button 
-                        variant="outline" 
-                        size="sm" 
+                      <Button
+                        variant="outline"
+                        size="sm"
                         className="flex-1"
-                        onClick={() => {
-                          // Toggle job status
-                          console.log('Toggle status for job:', job._id);
-                        }}
+                        onClick={() => handleToggleStatus(job._id)}
                       >
                         {job.isActive ? 'Close' : 'Reopen'}
                       </Button>

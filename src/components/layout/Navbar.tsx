@@ -5,11 +5,13 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X, Briefcase, User, LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useAuthContext } from "@/contexts/AuthContext";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { isAuthenticated, user, logout, isAdminOrHR } = useAuthContext();
   const pathname = usePathname();
-  const isAdmin = pathname.startsWith("/admin");
+  const isAdminPath = pathname?.startsWith("/admin") ?? false;
 
   const candidateLinks = [
     { name: "Home", path: "/" },
@@ -24,19 +26,24 @@ const Navbar = () => {
     { name: "Employees", path: "/admin/employees" },
   ];
 
-  const links = isAdmin ? adminLinks : candidateLinks;
+  const links = isAdminPath ? adminLinks : candidateLinks;
+
+  const handleLogout = () => {
+    logout();
+    window.location.href = '/';
+  };
 
   return (
     <nav className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-border shadow-sm">
       <div className="container-custom">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link href={isAdmin ? "/admin/dashboard" : "/"} className="flex items-center gap-2">
+          <Link href={isAdminPath ? "/admin/dashboard" : "/"} className="flex items-center gap-2">
             <div className="flex items-center">
               <span className="text-2xl font-bold text-primary">Boot</span>
               <span className="text-2xl font-bold text-accent">Way</span>
             </div>
-            {isAdmin && (
+            {isAdminPath && (
               <span className="ml-2 px-2 py-0.5 text-xs font-medium bg-primary/10 text-primary rounded-full">
                 HR Portal
               </span>
@@ -49,11 +56,10 @@ const Navbar = () => {
               <Link
                 key={link.path}
                 href={link.path}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  pathname === link.path
-                    ? "bg-primary/10 text-primary"
-                    : "text-muted-foreground hover:text-foreground hover:bg-muted"
-                }`}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${pathname === link.path
+                  ? "bg-primary/10 text-primary"
+                  : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                  }`}
               >
                 {link.name}
               </Link>
@@ -62,7 +68,7 @@ const Navbar = () => {
 
           {/* Desktop Actions */}
           <div className="hidden md:flex items-center gap-3">
-            {isAdmin ? (
+            {isAdminPath ? (
               <Button variant="outline" size="sm" asChild>
                 <Link href="/">
                   <User className="w-4 h-4 mr-1" />
@@ -71,18 +77,35 @@ const Navbar = () => {
               </Button>
             ) : (
               <>
-                <Button variant="ghost" size="sm" asChild>
-                  <Link href="/admin/login">
-                    <LogIn className="w-4 h-4 mr-1" />
-                    HR Login
-                  </Link>
-                </Button>
-                <Button size="sm" asChild>
-                  <Link href="/careers">
-                    <Briefcase className="w-4 h-4 mr-1" />
-                    View Careers
-                  </Link>
-                </Button>
+                {isAuthenticated ? (
+                  <div className="flex items-center gap-3">
+                    <span className="text-sm font-medium">Hello, {user?.fullName}</span>
+                    <Button variant="outline" size="sm" onClick={handleLogout}>
+                      Logout
+                    </Button>
+                    {isAdminOrHR && (
+                      <Button variant="ghost" size="sm" asChild>
+                        <Link href="/admin/dashboard">
+                          HR Portal
+                        </Link>
+                      </Button>
+                    )}
+                  </div>
+                ) : (
+                  <>
+                    <Button variant="ghost" size="sm" asChild>
+                      <Link href="/login">
+                        <LogIn className="w-4 h-4 mr-1" />
+                        Login
+                      </Link>
+                    </Button>
+                    <Button size="sm" asChild>
+                      <Link href="/candidate/signup">
+                        Sign Up
+                      </Link>
+                    </Button>
+                  </>
+                )}
               </>
             )}
           </div>
@@ -105,17 +128,16 @@ const Navbar = () => {
                   key={link.path}
                   href={link.path}
                   onClick={() => setIsOpen(false)}
-                  className={`px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
-                    pathname === link.path
-                      ? "bg-primary/10 text-primary"
-                      : "text-muted-foreground hover:text-foreground hover:bg-muted"
-                  }`}
+                  className={`px-4 py-3 rounded-lg text-sm font-medium transition-colors ${pathname === link.path
+                    ? "bg-primary/10 text-primary"
+                    : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                    }`}
                 >
                   {link.name}
                 </Link>
               ))}
               <div className="pt-4 mt-2 border-t border-border flex flex-col gap-2">
-                {isAdmin ? (
+                {isAdminPath ? (
                   <Button variant="outline" size="sm" asChild className="justify-start">
                     <Link href="/" onClick={() => setIsOpen(false)}>
                       <User className="w-4 h-4 mr-2" />
@@ -124,18 +146,31 @@ const Navbar = () => {
                   </Button>
                 ) : (
                   <>
-                    <Button variant="ghost" size="sm" asChild className="justify-start">
-                      <Link href="/admin/login" onClick={() => setIsOpen(false)}>
-                        <LogIn className="w-4 h-4 mr-2" />
-                        HR Login
-                      </Link>
-                    </Button>
-                    <Button size="sm" asChild className="justify-start">
-                      <Link href="/careers" onClick={() => setIsOpen(false)}>
-                        <Briefcase className="w-4 h-4 mr-2" />
-                        View Careers
-                      </Link>
-                    </Button>
+                    {isAuthenticated ? (
+                      <>
+                        <div className="px-4 py-2 text-sm font-medium text-muted-foreground">
+                          Signed in as {user?.fullName}
+                        </div>
+                        <Button variant="outline" size="sm" onClick={handleLogout} className="justify-start">
+                          Logout
+                        </Button>
+                      </>
+                    ) : (
+                      <>
+                        <Button variant="ghost" size="sm" asChild className="justify-start">
+                          <Link href="/login" onClick={() => setIsOpen(false)}>
+                            <LogIn className="w-4 h-4 mr-2" />
+                            Login
+                          </Link>
+                        </Button>
+                        <Button size="sm" asChild className="justify-start">
+                          <Link href="/candidate/signup" onClick={() => setIsOpen(false)}>
+                            <User className="w-4 h-4 mr-2" />
+                            Sign Up
+                          </Link>
+                        </Button>
+                      </>
+                    )}
                   </>
                 )}
               </div>
