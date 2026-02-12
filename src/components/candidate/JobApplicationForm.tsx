@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useAuthContext } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -25,10 +26,11 @@ interface JobApplicationFormProps {
 
 export default function JobApplicationForm({ jobId }: JobApplicationFormProps) {
   const router = useRouter();
+  const { user } = useAuthContext();
   const [formData, setFormData] = useState({
-    fullName: '',
-    email: '',
-    phone: '',
+    fullName: user?.fullName || '',
+    email: user?.email || '',
+    phone: user?.phone || '',
     linkedIn: '',
     portfolio: '',
     experience: '',
@@ -41,6 +43,18 @@ export default function JobApplicationForm({ jobId }: JobApplicationFormProps) {
 
   const { data: job, isLoading: jobLoading } = useJob(jobId);
   const applyForJobMutation = useApplyForJob();
+
+  // Update form data when user data is available (in case of delay or re-fetch)
+  useEffect(() => {
+    if (user) {
+      setFormData(prev => ({
+        ...prev,
+        fullName: prev.fullName || user.fullName || '',
+        email: prev.email || user.email || '',
+        phone: prev.phone || user.phone || ''
+      }));
+    }
+  }, [user]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -72,16 +86,16 @@ export default function JobApplicationForm({ jobId }: JobApplicationFormProps) {
         candidateName: formData.fullName,
         candidateEmail: formData.email,
         candidatePhone: formData.phone,
-        resume: formData.resume?.name || '',
+        resume: formData.resume, // Send actual File object
         coverLetter: formData.coverLetter,
       });
-      
+
       setSuccess(true);
       // Redirect to careers after 2 seconds since candidate doesn't need to track applications
       setTimeout(() => {
         router.push('/careers');
       }, 2000);
-      
+
     } catch (err: any) {
       setError(err.message || 'Failed to submit application. Please try again.');
     } finally {
@@ -117,7 +131,7 @@ export default function JobApplicationForm({ jobId }: JobApplicationFormProps) {
               Application Submitted!
             </DialogTitle>
             <DialogDescription className="text-center">
-              Thank you for applying to the {job.title} position. We'll review
+              Thank you for applying to the {job.title} position. We&apos;ll review
               your application and get back to you soon.
             </DialogDescription>
           </DialogHeader>

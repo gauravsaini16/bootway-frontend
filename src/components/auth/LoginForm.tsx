@@ -15,7 +15,7 @@ export default function LoginForm() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const router = useRouter();
-  
+
   const { login, loginLoading } = useAuthContext();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -49,7 +49,7 @@ export default function LoginForm() {
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
             )}
-            
+
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input
@@ -62,7 +62,7 @@ export default function LoginForm() {
                 disabled={loginLoading}
               />
             </div>
-            
+
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
               <Input
@@ -75,10 +75,10 @@ export default function LoginForm() {
                 disabled={loginLoading}
               />
             </div>
-            
-            <Button 
-              type="submit" 
-              className="w-full" 
+
+            <Button
+              type="submit"
+              className="w-full"
               disabled={loginLoading}
             >
               {loginLoading ? (
@@ -91,10 +91,10 @@ export default function LoginForm() {
               )}
             </Button>
           </form>
-          
+
           <div className="mt-4 text-center text-sm text-muted-foreground">
             <p>
-              Don't have an account?{' '}
+              Don&apos;t have an account?{' '}
               <Button variant="link" className="p-0 h-auto font-normal">
                 Contact your administrator
               </Button>

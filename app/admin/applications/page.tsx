@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Search, Filter, Eye, Calendar, FileText, MoreVertical } from 'lucide-react';
+import { Search, Filter, Eye, Calendar, FileText, MoreVertical, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -51,7 +51,7 @@ export default function AdminApplications() {
   const filteredApplications = applications.filter((app) => {
     const matchesSearch =
       app.candidateName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (app.job?.title || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (app.jobId as any)?.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       app.candidateEmail.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesStatus = statusFilter === 'all' || app.status === statusFilter;
     return matchesSearch && matchesStatus;
@@ -61,13 +61,21 @@ export default function AdminApplications() {
     <PageContainer>
       {/* Header */}
       <section className="bg-hero-gradient py-8 md:py-10">
-        <div className="container-custom">
-          <h1 className="text-2xl md:text-3xl font-bold text-white mb-2">
-            Applications
-          </h1>
-          <p className="text-white/80">
-            Review and manage candidate applications
-          </p>
+        <div className="container-custom flex justify-between items-center">
+          <div>
+            <h1 className="text-2xl md:text-3xl font-bold text-white mb-2">
+              Applications
+            </h1>
+            <p className="text-white/80">
+              Review and manage candidate applications
+            </p>
+          </div>
+          <Button asChild variant="ghost">
+            <Link href="/admin/dashboard" className="flex items-center text-white">
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back
+            </Link>
+          </Button>
         </div>
       </section>
 
@@ -149,7 +157,7 @@ export default function AdminApplications() {
                               </p>
                             </div>
                           </TableCell>
-                          <TableCell>{app.job?.title || 'N/A'}</TableCell>
+                          <TableCell>{(app.jobId as any)?.title || 'N/A'}</TableCell>
                           <TableCell className="text-muted-foreground">
                             {new Date(app.appliedAt).toLocaleDateString('en-IN', {
                               day: 'numeric',

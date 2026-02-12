@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { ArrowLeft, Upload, CheckCircle, Loader2 } from 'lucide-react';
@@ -18,11 +18,36 @@ import {
 } from '@/components/ui/dialog';
 import PageContainer from '@/components/layout/PageContainer';
 import JobApplicationForm from '@/components/candidate/JobApplicationForm';
+import { useAuthContext } from '@/contexts/AuthContext';
 
 export default function ApplyPage() {
   const params = useParams();
   const router = useRouter();
   const jobId = params?.jobId as string;
+  const { isAuthenticated, isLoading: authLoading } = useAuthContext();
+
+  useEffect(() => {
+    if (!authLoading && !isAuthenticated) {
+      router.push(`/candidate/login?redirect=/careers/${jobId}/apply`);
+    }
+  }, [authLoading, isAuthenticated, router, jobId]);
+
+  if (authLoading) {
+    return (
+      <PageContainer>
+        <div className="container-custom section-padding flex items-center justify-center min-h-[50vh]">
+          <div className="text-center">
+            <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-primary" />
+            <p className="text-muted-foreground">Checking authentication...</p>
+          </div>
+        </div>
+      </PageContainer>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return null; // Will redirect
+  }
 
   if (!jobId) {
     return (

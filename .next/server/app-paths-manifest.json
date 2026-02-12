@@ -1,5 +1,12 @@
 {
+  "/(auth)/login/page": "app/(auth)/login/page.js",
+  "/(auth)/candidate/login/page": "app/(auth)/candidate/login/page.js",
+  "/admin/applications/page": "app/admin/applications/page.js",
   "/(candidate)/page": "app/(candidate)/page.js",
+  "/(candidate)/careers/page": "app/(candidate)/careers/page.js",
+  "/(candidate)/careers/[jobId]/apply/page": "app/(candidate)/careers/[jobId]/apply/page.js",
   "/admin/login/page": "app/admin/login/page.js",
-  "/admin/dashboard/page": "app/admin/dashboard/page.js"
+  "/admin/dashboard/page": "app/admin/dashboard/page.js",
+  "/admin/interviews/page": "app/admin/interviews/page.js",
+  "/admin/applications/[applicationId]/page": "app/admin/applications/[applicationId]/page.js"
 }
