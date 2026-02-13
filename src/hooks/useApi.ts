@@ -230,10 +230,11 @@ export const useApplication = (id: string, options?: UseQueryOptions<Application
 };
 
 export const useMyApplications = (options?: UseQueryOptions<Application[], APIError>) => {
+  const { isAuthenticated } = useAuth();
   return useQuery<Application[], APIError>({
     queryKey: queryKeys.applications.my(),
     queryFn: () => apiService.applications.getMyApplications().then(res => res.data),
-    enabled: apiService.auth.isAuthenticated(),
+    enabled: isAuthenticated,
     ...defaultQueryOptions,
     ...options,
   });
