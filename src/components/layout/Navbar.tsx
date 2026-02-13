@@ -16,6 +16,7 @@ const Navbar = () => {
   const candidateLinks = [
     { name: "Home", path: "/" },
     { name: "Careers", path: "/careers" },
+    ...(isAuthenticated ? [{ name: "My Applications", path: "/applications" }] : []),
   ];
 
   const adminLinks = [

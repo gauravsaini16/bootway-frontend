@@ -21,35 +21,25 @@
       "static/chunks/main-app.js",
       "static/chunks/app/(candidate)/page.js"
     ],
-    "/admin/layout": [
+    "/(candidate)/careers/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/admin/layout.js"
+      "static/chunks/app/(candidate)/careers/page.js"
     ],
-    "/admin/applications/page": [
+    "/(candidate)/applications/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/admin/applications/page.js"
+      "static/chunks/app/(candidate)/applications/page.js"
     ],
     "/(auth)/login/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/(auth)/login/page.js"
     ],
-    "/(auth)/candidate/login/page": [
+    "/admin/layout": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/(auth)/candidate/login/page.js"
-    ],
-    "/(candidate)/careers/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/(candidate)/careers/page.js"
-    ],
-    "/(candidate)/careers/[jobId]/apply/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/(candidate)/careers/[jobId]/apply/page.js"
+      "static/chunks/app/admin/layout.js"
     ],
     "/admin/login/page": [
       "static/chunks/webpack.js",
@@ -61,15 +51,65 @@
       "static/chunks/main-app.js",
       "static/chunks/app/admin/dashboard/page.js"
     ],
-    "/admin/interviews/page": [
+    "/admin/jobs/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/admin/interviews/page.js"
+      "static/chunks/app/admin/jobs/page.js"
+    ],
+    "/admin/jobs/post/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/admin/jobs/post/page.js"
+    ],
+    "/(auth)/candidate/login/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/(auth)/candidate/login/page.js"
+    ],
+    "/(candidate)/careers/[jobId]/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/(candidate)/careers/[jobId]/page.js"
+    ],
+    "/(candidate)/careers/[jobId]/apply/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/(candidate)/careers/[jobId]/apply/page.js"
+    ],
+    "/_not-found/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/_not-found/page.js"
+    ],
+    "/admin/applications/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/admin/applications/page.js"
     ],
     "/admin/applications/[applicationId]/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/admin/applications/[applicationId]/page.js"
+    ],
+    "/admin/interviews/schedule/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/admin/interviews/schedule/page.js"
+    ],
+    "/admin/interviews/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/admin/interviews/page.js"
+    ],
+    "/admin/interviews/[interviewId]/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/admin/interviews/[interviewId]/page.js"
+    ],
+    "/admin/employees/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/admin/employees/page.js"
     ]
   }
 }

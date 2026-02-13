@@ -277,8 +277,15 @@ export const applicationsService = {
       console.log(`  ${key}:`, value instanceof File ? `File(${value.name}, ${value.size} bytes, ${value.type})` : value);
     }
 
+    const headers: HeadersInit = {};
+    const token = TokenManager.getToken();
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+
     const response = await fetch(`${API_CONFIG.BASE_URL}${API_ENDPOINTS.APPLICATIONS.CREATE}`, {
       method: 'POST',
+      headers,
       // Don't set Content-Type header - let browser set it with boundary for FormData
       body: formData,
     });
