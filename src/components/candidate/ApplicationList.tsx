@@ -219,7 +219,7 @@ export default function ApplicationList() {
                 </div>
                 <h3 className="text-xl font-bold mb-2">Start Your Journey</h3>
                 <p className="text-muted-foreground mb-8 text-center max-w-sm">
-                    You haven't applied to any jobs yet. Your next career move is just an application away!
+                    You haven&apos;t applied to any jobs yet. Your next career move is just an application away!
                 </p>
                 <Button size="lg" className="rounded-full px-8 shadow-lg hover:shadow-xl transition-all" asChild>
                     <Link href="/careers">Explore Opportunities</Link>
