@@ -337,6 +337,19 @@ export const useUpdateInterview = () => {
   });
 };
 
+export const useDeleteInterview = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) => apiService.interviews.deleteInterview(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.interviews.lists() });
+      queryClient.invalidateQueries({ queryKey: queryKeys.interviews.my() });
+    },
+    ...defaultMutationOptions,
+  });
+};
+
 // Offers Hooks
 export const useOffers = (filters?: any, options?: UseQueryOptions<Offer[], APIError>) => {
   return useQuery<Offer[], APIError>({
@@ -478,6 +491,7 @@ const apiHooks = {
   useMyInterviews,
   useScheduleInterview,
   useUpdateInterview,
+  useDeleteInterview,
 
   // Offers
   useOffers,

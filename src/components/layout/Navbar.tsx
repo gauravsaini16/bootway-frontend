@@ -14,8 +14,7 @@ const Navbar = () => {
   const isAdminPath = pathname?.startsWith("/admin") ?? false;
 
   const candidateLinks = [
-    { name: "Home", path: "/" },
-    { name: "Careers", path: "/careers" },
+    { name: "Careers", path: "/" },
     ...(isAuthenticated ? [{ name: "My Applications", path: "/applications" }] : []),
   ];
 

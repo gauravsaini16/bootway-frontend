@@ -217,9 +217,17 @@ export default function AdminDashboard() {
                             })}
                           </p>
                         </div>
-                        <Button variant="outline" size="sm">
-                          Join
-                        </Button>
+                        {interview.meetingLink || (interview.location && interview.location.startsWith('http')) ? (
+                          <Button variant="outline" size="sm" asChild>
+                            <a href={interview.meetingLink || interview.location} target="_blank" rel="noopener noreferrer">
+                              Join
+                            </a>
+                          </Button>
+                        ) : (
+                          <Button variant="outline" size="sm" disabled>
+                            Join
+                          </Button>
+                        )}
                       </div>
                     ))}
                   </div>

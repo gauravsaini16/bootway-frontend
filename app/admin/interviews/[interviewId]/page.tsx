@@ -16,6 +16,7 @@ import {
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { getInterviewById, updateInterview } from '@/lib/apiClient';
+import { useDeleteInterview, useUpdateApplication } from '@/hooks/useApi';
 import { toast } from 'sonner';
 
 const statusOptions = [
@@ -23,6 +24,7 @@ const statusOptions = [
     { value: 'completed', label: 'Completed' },
     { value: 'cancelled', label: 'Cancelled' },
     { value: 'rescheduled', label: 'Rescheduled' },
+    { value: 'Selected', label: 'Selected (Auto Delete)' },
 ];
 
 export default function InterviewDetails() {
@@ -35,6 +37,8 @@ export default function InterviewDetails() {
     const [status, setStatus] = useState('');
     const [notes, setNotes] = useState('');
     const [isSaving, setIsSaving] = useState(false);
+    const deleteInterviewMutation = useDeleteInterview();
+    const updateApplicationMutation = useUpdateApplication();
 
     const fetchInterview = useCallback(async () => {
         try {
@@ -64,6 +68,34 @@ export default function InterviewDetails() {
     const handleUpdate = async () => {
         setIsSaving(true);
         try {
+            if (status === 'Selected') {
+                if (window.confirm('Setting status to Selected will remove this interview from the schedule and mark the application as Selected. Continue?')) {
+                    const appId = interview.applicationId?._id || interview.applicationId;
+                    if (appId) {
+                        try {
+                            await updateApplicationMutation.mutateAsync({
+                                id: appId,
+                                updateData: { status: 'selected' }
+                            });
+                            toast.success('Application status updated to Selected');
+                        } catch (err) {
+                            console.error('Failed to update application status:', err);
+                            toast.error('Failed to update application status');
+                            setIsSaving(false);
+                            return;
+                        }
+                    }
+
+                    await deleteInterviewMutation.mutateAsync(interviewId);
+                    toast.success('Interview removed (Candidate Selected)');
+                    router.push('/admin/interviews');
+                    return;
+                } else {
+                    setIsSaving(false);
+                    return;
+                }
+            }
+
             const result = await updateInterview(interviewId, { status, notes });
             if (result.success) {
                 toast.success('Interview updated successfully');
@@ -76,6 +108,19 @@ export default function InterviewDetails() {
             toast.error('Error updating interview');
         } finally {
             setIsSaving(false);
+        }
+    };
+
+    const handleDelete = async () => {
+        if (window.confirm('Are you sure you want to delete this interview? This action cannot be undone.')) {
+            try {
+                await deleteInterviewMutation.mutateAsync(interviewId);
+                toast.success('Interview deleted successfully');
+                router.push('/admin/interviews');
+            } catch (error) {
+                console.error('Error deleting interview:', error);
+                toast.error('Failed to delete interview');
+            }
         }
     };
 
@@ -273,12 +318,21 @@ export default function InterviewDetails() {
                             </Card>
 
                             <Card>
-                                <CardContent className="p-4">
+                                <CardContent className="p-4 space-y-3">
                                     <Button variant="outline" className="w-full justify-start" asChild>
                                         <Link href={`/admin/applications/${interview.applicationId?._id || interview.applicationId}`}>
                                             <User className="w-4 h-4 mr-2" />
                                             View Full Application
                                         </Link>
+                                    </Button>
+
+                                    <Button
+                                        variant="destructive"
+                                        className="w-full justify-start bg-red-50 text-red-600 hover:bg-red-100 border-red-200"
+                                        onClick={handleDelete}
+                                    >
+                                        <XCircle className="w-4 h-4 mr-2" />
+                                        Delete Interview
                                     </Button>
                                 </CardContent>
                             </Card>
