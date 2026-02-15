@@ -176,7 +176,7 @@ const ApplicationCard = ({ application }: { application: Application }) => {
                             <div className="bg-white p-3 rounded-full shadow-sm mb-3">
                                 <Trophy className="w-8 h-8 text-green-600" />
                             </div>
-                            <span className="font-bold text-lg mb-1">Congratulations! You're Selected!</span>
+                            <span className="font-bold text-lg mb-1">Congratulations! You&apos;re Selected!</span>
                             <span className="text-sm opacity-90">We are thrilled to offer you this position. Check your email for next steps.</span>
                         </div>
                     ) : (
