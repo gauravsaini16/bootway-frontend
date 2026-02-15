@@ -14,7 +14,7 @@ import { useAuthContext } from '@/contexts/AuthContext';
 function CandidateSignupForm() {
     const router = useRouter();
     const searchParams = useSearchParams();
-    const redirect = searchParams?.get('redirect') || '/careers';
+    const redirect = searchParams?.get('redirect') || '/';
 
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState('');

@@ -23,7 +23,7 @@ export default function NotFound() {
             </Link>
           </Button>
           <Button variant="outline" asChild>
-            <Link href="/careers">
+            <Link href="/">
               Browse Jobs
             </Link>
           </Button>

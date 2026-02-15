@@ -113,9 +113,13 @@ const ApplicationCard = ({ application }: { application: Application }) => {
     if (!job) return null;
 
     const isRejected = application.status === 'rejected';
+    const isSelected = application.status === 'selected';
 
     return (
-        <Card className="hover:shadow-lg transition-all duration-300 border-l-4 border-l-primary overflow-hidden group">
+        <Card className={cn(
+            "hover:shadow-lg transition-all duration-300 border-l-4 overflow-hidden group",
+            isSelected ? "border-l-green-500" : "border-l-primary"
+        )}>
             <CardHeader className="pb-4">
                 <div className="flex flex-col md:flex-row justify-between md:items-start gap-4">
                     <div className="space-y-1">
@@ -123,7 +127,10 @@ const ApplicationCard = ({ application }: { application: Application }) => {
                             <Building2 className="w-4 h-4 text-muted-foreground" />
                             <span className="text-sm font-medium text-muted-foreground">{job.department}</span>
                         </div>
-                        <CardTitle className="text-2xl font-bold text-foreground group-hover:text-primary transition-colors">
+                        <CardTitle className={cn(
+                            "text-2xl font-bold text-foreground transition-colors",
+                            isSelected ? "group-hover:text-green-600" : "group-hover:text-primary"
+                        )}>
                             {job.title}
                         </CardTitle>
                         <div className="flex items-center gap-4 text-sm text-muted-foreground pt-1">
@@ -142,7 +149,7 @@ const ApplicationCard = ({ application }: { application: Application }) => {
                             variant={isRejected ? "destructive" : "outline"}
                             className={cn(
                                 "px-3 py-1 capitalize text-sm",
-                                application.status === 'selected' && "bg-success/15 text-success border-success/20",
+                                isSelected && "bg-green-100 text-green-700 border-green-200 hover:bg-green-100",
                                 application.status === 'offer' && "bg-primary/10 text-primary border-primary/20",
                             )}
                         >
@@ -163,6 +170,14 @@ const ApplicationCard = ({ application }: { application: Application }) => {
                             <XCircle className="w-8 h-8 mb-2 opacity-80" />
                             <span className="font-semibold">Application Not Selected</span>
                             <span className="text-sm opacity-80">Thank you for your interest. Best of luck!</span>
+                        </div>
+                    ) : isSelected ? (
+                        <div className="flex flex-col items-center justify-center py-6 text-green-700 bg-green-50 rounded-lg border border-green-100">
+                            <div className="bg-white p-3 rounded-full shadow-sm mb-3">
+                                <Trophy className="w-8 h-8 text-green-600" />
+                            </div>
+                            <span className="font-bold text-lg mb-1">Congratulations! You're Selected!</span>
+                            <span className="text-sm opacity-90">We are thrilled to offer you this position. Check your email for next steps.</span>
                         </div>
                     ) : (
                         <ApplicationTimeline status={application.status} />

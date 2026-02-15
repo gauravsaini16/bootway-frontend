@@ -93,7 +93,7 @@ export default function JobApplicationForm({ jobId }: JobApplicationFormProps) {
       setSuccess(true);
       // Redirect to careers after 2 seconds since candidate doesn't need to track applications
       setTimeout(() => {
-        router.push('/careers');
+        router.push('/');
       }, 2000);
 
     } catch (err: any) {
@@ -137,7 +137,7 @@ export default function JobApplicationForm({ jobId }: JobApplicationFormProps) {
           </DialogHeader>
           <div className="flex flex-col gap-3 mt-4">
             <Button asChild>
-              <Link href="/careers">Browse More Jobs</Link>
+              <Link href="/">Browse More Jobs</Link>
             </Button>
             <Button variant="outline" asChild>
               <Link href={`/careers/${job._id}`}>View Job Details</Link>

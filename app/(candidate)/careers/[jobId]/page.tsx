@@ -2,12 +2,12 @@
 
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
-import { 
-  MapPin, 
-  Clock, 
-  Briefcase, 
-  IndianRupee, 
-  ArrowLeft, 
+import {
+  MapPin,
+  Clock,
+  Briefcase,
+  IndianRupee,
+  ArrowLeft,
   ArrowRight,
   CheckCircle,
   Building,
@@ -45,7 +45,7 @@ export default function JobDetailsPage() {
             The job you&apos;re looking for doesn&apos;t exist or has been removed.
           </p>
           <Button asChild>
-            <Link href="/careers">
+            <Link href="/">
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to Careers
             </Link>
