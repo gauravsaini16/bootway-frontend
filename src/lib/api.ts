@@ -3,7 +3,7 @@
 
 // API Base Configuration
 export const API_CONFIG = {
-  BASE_URL: process.env.NEXT_PUBLIC_API_URL || 'https://bootway-backend.onrender.com/api',
+  BASE_URL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api',
   API_ENDPOINT: '',
   TIMEOUT: 30000, // 30 seconds
   RETRY_ATTEMPTS: 3,
@@ -21,8 +21,10 @@ export const API_ENDPOINTS = {
     LOGIN: '/auth/login',
     ME: '/auth/me',
     UPDATE_PASSWORD: '/auth/updatePassword',
+    FORGOT_PASSWORD: '/auth/forgotpassword',
+    RESET_PASSWORD: (token: string) => `/auth/resetpassword/${token}`,
   },
-  
+
   // Jobs
   JOBS: {
     LIST: '/jobs',
@@ -32,7 +34,7 @@ export const API_ENDPOINTS = {
     DELETE: (id: string) => `/jobs/${id}`,
     TOGGLE_STATUS: (id: string) => `/jobs/${id}/toggle`,
   },
-  
+
   // Applications
   APPLICATIONS: {
     LIST: '/applications',
@@ -43,7 +45,7 @@ export const API_ENDPOINTS = {
     BY_JOB: (jobId: string) => `/applications/job/${jobId}`,
     MY_APPLICATIONS: '/applications/candidate/my-applications',
   },
-  
+
   // Interviews
   INTERVIEWS: {
     LIST: '/interviews',
@@ -53,7 +55,7 @@ export const API_ENDPOINTS = {
     DELETE: (id: string) => `/interviews/${id}`,
     MY_INTERVIEWS: '/interviews/candidate/my-interviews',
   },
-  
+
   // Offers
   OFFERS: {
     LIST: '/offers',
@@ -63,7 +65,7 @@ export const API_ENDPOINTS = {
     DELETE: (id: string) => `/offers/${id}`,
     MY_OFFERS: '/offers/candidate/my-offers',
   },
-  
+
   // Users
   USERS: {
     LIST: '/users',
@@ -72,7 +74,7 @@ export const API_ENDPOINTS = {
     UPDATE: (id: string) => `/users/${id}`,
     DELETE: (id: string) => `/users/${id}`,
   },
-  
+
   // Health Check
   HEALTH: '/health',
 } as const;
@@ -109,26 +111,26 @@ export const TokenManager = {
     if (typeof window === 'undefined') return null;
     return localStorage.getItem('token');
   },
-  
+
   setToken(token: string): void {
     if (typeof window === 'undefined') return;
     localStorage.setItem('token', token);
   },
-  
+
   removeToken(): void {
     if (typeof window === 'undefined') return;
     localStorage.removeItem('token');
   },
-  
+
   isAuthenticated(): boolean {
     return !!this.getToken();
   },
-  
+
   // Get token payload (decoded without verification)
   getTokenPayload(): any {
     const token = this.getToken();
     if (!token) return null;
-    
+
     try {
       const payload = token.split('.')[1];
       return JSON.parse(atob(payload));
@@ -136,12 +138,12 @@ export const TokenManager = {
       return null;
     }
   },
-  
+
   // Check if token is expired
   isTokenExpired(): boolean {
     const payload = this.getTokenPayload();
     if (!payload) return true;
-    
+
     return payload.exp * 1000 < Date.now();
   },
 };
@@ -190,31 +192,31 @@ class RequestBuilder {
   private url: string;
   private options: RequestInit = {};
   private params: Record<string, any> = {};
-  
+
   constructor(url: string) {
     this.url = url;
   }
-  
+
   method(method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH'): this {
     this.options.method = method;
     return this;
   }
-  
+
   body(data: any): this {
     this.options.body = JSON.stringify(data);
     return this;
   }
-  
+
   headers(headers: Record<string, string>): this {
     this.options.headers = { ...this.options.headers, ...headers };
     return this;
   }
-  
+
   query(params: Record<string, any>): this {
     this.params = { ...this.params, ...params };
     return this;
   }
-  
+
   auth(token?: string): this {
     const authToken = token || TokenManager.getToken();
     if (authToken) {
@@ -225,7 +227,7 @@ class RequestBuilder {
     }
     return this;
   }
-  
+
   build(): { url: string; options: RequestInit } {
     const queryString = new URLSearchParams(
       Object.entries(this.params).reduce((acc, [key, value]) => {
@@ -235,9 +237,9 @@ class RequestBuilder {
         return acc;
       }, {} as Record<string, string>)
     ).toString();
-    
+
     const finalUrl = queryString ? `${this.url}?${queryString}` : this.url;
-    
+
     return {
       url: finalUrl,
       options: {
@@ -254,53 +256,53 @@ class RequestBuilder {
 // Main API Client Class
 export class ApiClient {
   private baseURL: string;
-  
+
   constructor(baseURL: string = API_BASE_URL) {
     this.baseURL = baseURL;
   }
-  
+
   private async request<T = any>(
     endpoint: string,
     options?: RequestInit & { params?: Record<string, any> }
   ): Promise<ApiResponse<T>> {
     const builder = new RequestBuilder(`${this.baseURL}${endpoint}`);
-    
+
     // Set method
     if (options?.method) {
       builder.method(options.method as any);
     }
-    
+
     // Set body
     if (options?.body) {
       builder.body(options.body);
     }
-    
+
     // Set headers
     if (options?.headers) {
       builder.headers(options.headers as Record<string, string>);
     }
-    
+
     // Set query params
     if (options?.params) {
       builder.query(options.params);
     }
-    
+
     // Set auth token
     builder.auth();
-    
+
     const { url, options: finalOptions } = builder.build();
-    
+
     try {
       console.log(`🌐 API Request: ${finalOptions.method} ${url}`);
-      
+
       const response = await fetch(url, {
         ...finalOptions,
         signal: AbortSignal.timeout(API_CONFIG.TIMEOUT),
       });
-      
+
       const responseText = await response.text();
       let responseData: ApiResponse<T> | ApiError;
-      
+
       try {
         responseData = JSON.parse(responseText);
       } catch {
@@ -309,7 +311,7 @@ export class ApiClient {
           message: 'Invalid JSON response from server',
         };
       }
-      
+
       if (!response.ok) {
         throw new APIError(
           responseData.message || `HTTP ${response.status}`,
@@ -318,49 +320,49 @@ export class ApiClient {
           responseData
         );
       }
-      
+
       console.log(`✅ API Response: ${response.status}`, responseData);
       return responseData as ApiResponse<T>;
-      
+
     } catch (error) {
       console.error(`❌ API Error:`, error);
-      
+
       if (error instanceof APIError) {
         throw error;
       }
-      
+
       if (error instanceof Error) {
         if (error.name === 'AbortError') {
           throw new APIError('Request timeout', HTTP_STATUS.INTERNAL_SERVER_ERROR, 'TIMEOUT');
         }
         throw new APIError(error.message, HTTP_STATUS.INTERNAL_SERVER_ERROR, 'NETWORK_ERROR');
       }
-      
+
       throw new APIError('Unknown error occurred', HTTP_STATUS.INTERNAL_SERVER_ERROR, 'UNKNOWN');
     }
   }
-  
+
   // HTTP Methods
   async get<T = any>(endpoint: string, params?: Record<string, any>): Promise<ApiResponse<T>> {
     return this.request<T>(endpoint, { method: 'GET', params });
   }
-  
+
   async post<T = any>(endpoint: string, data?: any): Promise<ApiResponse<T>> {
     return this.request<T>(endpoint, { method: 'POST', body: data });
   }
-  
+
   async put<T = any>(endpoint: string, data?: any): Promise<ApiResponse<T>> {
     return this.request<T>(endpoint, { method: 'PUT', body: data });
   }
-  
+
   async patch<T = any>(endpoint: string, data?: any): Promise<ApiResponse<T>> {
     return this.request<T>(endpoint, { method: 'PATCH', body: data });
   }
-  
+
   async delete<T = any>(endpoint: string): Promise<ApiResponse<T>> {
     return this.request<T>(endpoint, { method: 'DELETE' });
   }
-  
+
   // Health Check
   async healthCheck(): Promise<ApiResponse<{ status: string }>> {
     return this.get(API_ENDPOINTS.HEALTH);
@@ -373,25 +375,25 @@ export const apiClient = new ApiClient();
 // Export convenience functions for common operations
 export const api = {
   // GET requests
-  get: <T = any>(endpoint: string, params?: Record<string, any>) => 
+  get: <T = any>(endpoint: string, params?: Record<string, any>) =>
     apiClient.get<T>(endpoint, params),
-  
+
   // POST requests
-  post: <T = any>(endpoint: string, data?: any) => 
+  post: <T = any>(endpoint: string, data?: any) =>
     apiClient.post<T>(endpoint, data),
-  
+
   // PUT requests
-  put: <T = any>(endpoint: string, data?: any) => 
+  put: <T = any>(endpoint: string, data?: any) =>
     apiClient.put<T>(endpoint, data),
-  
+
   // PATCH requests
-  patch: <T = any>(endpoint: string, data?: any) => 
+  patch: <T = any>(endpoint: string, data?: any) =>
     apiClient.patch<T>(endpoint, data),
-  
+
   // DELETE requests
-  delete: <T = any>(endpoint: string) => 
+  delete: <T = any>(endpoint: string) =>
     apiClient.delete<T>(endpoint),
-  
+
   // Health check
   health: () => apiClient.healthCheck(),
 };
