@@ -163,6 +163,14 @@ export const authService = {
     return api.put(API_ENDPOINTS.AUTH.UPDATE_PASSWORD, passwordData);
   },
 
+  async forgotPassword(email: string) {
+    return api.post(API_ENDPOINTS.AUTH.FORGOT_PASSWORD, { email });
+  },
+
+  async resetPassword(token: string, passwordData: any) {
+    return api.put(API_ENDPOINTS.AUTH.RESET_PASSWORD(token), passwordData);
+  },
+
   // Logout user
   logout() {
     TokenManager.removeToken();
