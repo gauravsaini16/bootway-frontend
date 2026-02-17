@@ -2,8 +2,5 @@
   "/(auth)/login/page": "app/(auth)/login/page.js",
   "/(auth)/candidate/login/page": "app/(auth)/candidate/login/page.js",
   "/(candidate)/page": "app/(candidate)/page.js",
-  "/admin/login/page": "app/admin/login/page.js",
-  "/(candidate)/careers/[jobId]/apply/page": "app/(candidate)/careers/[jobId]/apply/page.js",
-  "/admin/dashboard/page": "app/admin/dashboard/page.js",
-  "/(candidate)/applications/page": "app/(candidate)/applications/page.js"
+  "/(candidate)/careers/[jobId]/apply/page": "app/(candidate)/careers/[jobId]/apply/page.js"
 }
