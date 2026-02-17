@@ -1,9 +1,21 @@
 // API Configuration and Setup
 // This file centralizes all API configurations and provides a robust API client
 
+// Helper to resolve Base URL
+const getBaseUrl = () => {
+  let url = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+  // Remove trailing slashes
+  url = url.replace(/\/+$/, '');
+  // Append /api if not present
+  if (!url.endsWith('/api')) {
+    url += '/api';
+  }
+  return url;
+};
+
 // API Base Configuration
 export const API_CONFIG = {
-  BASE_URL: (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api').replace(/\/$/, '') + (process.env.NEXT_PUBLIC_API_URL?.endsWith('/api') ? '' : '/api'),
+  BASE_URL: getBaseUrl(),
   API_ENDPOINT: '',
   TIMEOUT: 30000, // 30 seconds
   RETRY_ATTEMPTS: 3,
