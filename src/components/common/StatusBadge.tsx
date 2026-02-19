@@ -1,14 +1,14 @@
 import { cn } from "@/lib/utils";
 
-type StatusType = 
-  | "applied" 
-  | "under-review" 
-  | "screening" 
-  | "shortlisted" 
-  | "interview" 
-  | "selected" 
-  | "rejected" 
-  | "offer" 
+type StatusType =
+  | "applied"
+  | "under-review"
+  | "screening"
+  | "shortlisted"
+  | "interview"
+  | "selected"
+  | "rejected"
+  | "offer"
   | "onboarding"
   | "active"
   | "inactive";

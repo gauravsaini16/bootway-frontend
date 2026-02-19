@@ -122,6 +122,32 @@ export interface Offer {
   candidate?: User;
 }
 
+export interface Employee {
+  _id: string;
+  user: User;
+  employeeId: string;
+  department: string;
+  position: string;
+  dateJoined: string;
+  status: 'active' | 'probation' | 'terminated' | 'resigned' | 'on-leave';
+  salary: {
+    amount: number;
+    currency: string;
+  };
+  personalDetails: {
+    address?: string;
+    emergencyContact?: {
+      name: string;
+      phone: string;
+      relation: string;
+    };
+    dateOfBirth?: string;
+  };
+  createdBy?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 // Authentication Service
 export const authService = {
   // Register new user
@@ -496,6 +522,29 @@ export const offersService = {
   },
 };
 
+// Employees Service
+export const employeesService = {
+  // Get all employees
+  async getEmployees(filters?: { search?: string }) {
+    return api.get<Employee[]>(API_ENDPOINTS.EMPLOYEES.LIST, filters);
+  },
+
+  // Get single employee
+  async getEmployeeById(id: string) {
+    return api.get<Employee>(API_ENDPOINTS.EMPLOYEES.DETAIL(id));
+  },
+
+  // Update employee
+  async updateEmployee(id: string, employeeData: any) {
+    return api.put<Employee>(API_ENDPOINTS.EMPLOYEES.UPDATE(id), employeeData);
+  },
+
+  // Delete employee
+  async deleteEmployee(id: string) {
+    return api.delete(API_ENDPOINTS.EMPLOYEES.DELETE(id));
+  },
+};
+
 // Users Service
 export const usersService = {
   // Get all users with filters
@@ -556,6 +605,7 @@ export const apiService = {
   applications: applicationsService,
   interviews: interviewsService,
   offers: offersService,
+  employees: employeesService,
   users: usersService,
   system: systemService,
 };

@@ -22,7 +22,7 @@ export default function AdminInterviews() {
               Schedule and manage interviews.
             </p>
           </div>
-          <Button asChild>
+          <Button asChild variant="secondary">
             <Link href="/admin/dashboard" className="flex items-center">
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back

@@ -15,7 +15,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import PageContainer from '@/components/layout/PageContainer';
 import StatsCard from '@/components/admin/StatsCard';
 import StatusBadge from '@/components/common/StatusBadge';
-import { useApplications, useInterviews, useUsers } from '@/hooks/useApi';
+import { useApplications, useInterviews, useEmployees } from '@/hooks/useApi';
 import { useAuthContext } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
@@ -27,20 +27,27 @@ export default function AdminDashboard() {
   // Always call hooks at the top level (Rules of Hooks)
   const { data: applications = [] } = useApplications({});
   const { data: interviews = [] } = useInterviews({ status: 'scheduled', limit: 3 });
-  const { data: users = [] } = useUsers({ role: 'candidate' });
+  const { data: employees = [] } = useEmployees();
 
-  // Redirect to login if not authenticated
+  // Redirect to login if not authenticated or not authorized
   useEffect(() => {
     console.log('Admin Dashboard - Auth state:', {
       isAuthenticated,
       isLoading,
       user: user?.email,
-      userRole: user?.role
+      userRole: user?.role,
+      isAdminOrHR: user && (user.role === 'admin' || user.role === 'hr')
     });
 
-    if (!isLoading && !isAuthenticated) {
-      console.log('Admin Dashboard - Redirecting to login...');
-      router.push('/admin/login');
+    if (!isLoading) {
+      if (!isAuthenticated) {
+        console.log('Admin Dashboard - Redirecting to login (not authenticated)...');
+        router.push('/admin/login');
+      } else if (user && user.role !== 'admin' && user.role !== 'hr') {
+        console.log('Admin Dashboard - Redirecting to home (unauthorized role)...');
+        // Optional: Show a toast or clear auth before redirecting
+        router.push('/');
+      }
     }
   }, [isAuthenticated, isLoading, router, user]);
 
@@ -77,7 +84,7 @@ export default function AdminDashboard() {
     shortlisted: applications.filter(app => app.status === 'shortlisted').length,
     interviews: interviews.filter(int => int.status === 'scheduled').length,
     selected: applications.filter(app => app.status === 'selected').length,
-    activeEmployees: users.filter(user => user.isActive).length,
+    activeEmployees: employees.length,
   };
 
   const recentApplications = applications.slice(0, 5);
@@ -88,7 +95,7 @@ export default function AdminDashboard() {
       {/* Header */}
       <section className="bg-hero-gradient py-8 md:py-10">
         <div className="container-custom">
-          <div className="flex justify-between items-start">
+          <div className="flex justify-between items-center">
             <div>
               <h1 className="text-2xl md:text-3xl font-bold text-white mb-2">
                 HR Dashboard
@@ -98,9 +105,9 @@ export default function AdminDashboard() {
               </p>
             </div>
             <Button
-              variant="outline"
+              variant="secondary"
               onClick={handleLogout}
-              className="bg-white/10 border-white/20 text-white hover:bg-white/20"
+              className="flex items-center align items-center"
             >
               Logout
             </Button>

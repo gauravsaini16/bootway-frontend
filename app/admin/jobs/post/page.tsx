@@ -175,8 +175,8 @@ export default function PostJob() {
               Create and publish a new job opening for your organization.
             </p>
           </div>
-          <Button asChild variant="ghost">
-            <Link href="/admin/jobs" className="flex items-center text-white">
+          <Button asChild variant="secondary">
+            <Link href="/admin/jobs" className="flex items-center">
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back
             </Link>

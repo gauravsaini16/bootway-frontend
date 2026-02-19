@@ -141,8 +141,8 @@ function ScheduleInterviewForm() {
                             Arrange an interview with {candidateName} for {jobTitle}
                         </p>
                     </div>
-                    <Button asChild variant="ghost">
-                        <Link href={`/admin/applications/${applicationId}`} className="flex items-center text-white">
+                    <Button asChild variant="secondary">
+                        <Link href={`/admin/applications/${applicationId}`} className="flex items-center">
                             <ArrowLeft className="w-4 h-4 mr-2" />
                             Back to Application
                         </Link>

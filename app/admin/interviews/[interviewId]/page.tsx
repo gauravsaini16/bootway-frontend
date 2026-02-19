@@ -156,7 +156,7 @@ export default function InterviewDetails() {
                             Manage interview schedule and feedback
                         </p>
                     </div>
-                    <Button asChild variant="ghost" className="bg-white/10 hover:bg-white/20 text-white border-none">
+                    <Button asChild variant="secondary" >
                         <Link href="/admin/interviews" className="flex items-center">
                             <ArrowLeft className="w-4 h-4 mr-2" />
                             Back to Interviews

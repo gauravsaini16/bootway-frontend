@@ -61,14 +61,14 @@ export default function AdminJobs() {
             </p>
           </div>
           <div className="flex gap-3">
-            <Button asChild>
+            <Button asChild variant="secondary">
               <Link href="/admin/jobs/post" className="flex items-center">
                 <Plus className="w-4 h-4 mr-2" />
                 Post Job
               </Link>
             </Button>
-            <Button asChild variant="ghost">
-              <Link href="/admin/dashboard" className="flex items-center text-white">
+            <Button asChild variant="secondary">
+              <Link href="/admin/dashboard" className="flex items-center">
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 Back
               </Link>
