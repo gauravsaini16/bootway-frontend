@@ -28,6 +28,7 @@ export default function RootLayout({
         <title>BootWay - Find Your Dream Job</title>
         <meta name="description" content="BootWay - HR Portal for Job Applications and Management" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="icon" href="/favicon.png" />
       </head>
       <body>
         <QueryClientProvider client={queryClient}>
