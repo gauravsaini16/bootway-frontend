@@ -87,6 +87,14 @@ export const API_ENDPOINTS = {
     DELETE: (id: string) => `/users/${id}`,
   },
 
+  // Employees
+  EMPLOYEES: {
+    LIST: '/employees',
+    DETAIL: (id: string) => `/employees/${id}`,
+    UPDATE: (id: string) => `/employees/${id}`,
+    DELETE: (id: string) => `/employees/${id}`,
+  },
+
   // Health Check
   HEALTH: '/health',
 } as const;

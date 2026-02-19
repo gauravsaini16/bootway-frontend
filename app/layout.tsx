@@ -25,8 +25,8 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <title>Career Compass - Find Your Dream Job</title>
-        <meta name="description" content="Career Compass - HR Portal for Job Applications and Management" />
+        <title>BootWay - Find Your Dream Job</title>
+        <meta name="description" content="BootWay - HR Portal for Job Applications and Management" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </head>
       <body>

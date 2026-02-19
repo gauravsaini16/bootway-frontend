@@ -2,7 +2,7 @@
 // This file provides React Query hooks for all API operations with caching and state management
 
 import { useQuery, useMutation, useQueryClient, UseQueryOptions, UseMutationOptions } from '@tanstack/react-query';
-import { apiService, User, Job, Application, Interview, Offer } from '@/services/apiService';
+import { apiService, User, Job, Application, Interview, Offer, Employee } from '@/services/apiService';
 import { APIError } from '@/lib/api';
 
 // Query keys factory
@@ -408,6 +408,51 @@ export const useUpdateOffer = () => {
   });
 };
 
+// Employees Hooks
+export const useEmployees = (filters?: any, options?: UseQueryOptions<Employee[], APIError>) => {
+  return useQuery<Employee[], APIError>({
+    queryKey: ['employees', 'list', filters],
+    queryFn: () => apiService.employees.getEmployees(filters).then(res => res.data),
+    ...defaultQueryOptions,
+    ...options,
+  });
+};
+
+export const useEmployee = (id: string, options?: UseQueryOptions<Employee, APIError>) => {
+  return useQuery<Employee, APIError>({
+    queryKey: ['employees', 'detail', id],
+    queryFn: () => apiService.employees.getEmployeeById(id).then(res => res.data),
+    enabled: !!id,
+    ...defaultQueryOptions,
+    ...options,
+  });
+};
+
+export const useUpdateEmployee = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, employeeData }: { id: string; employeeData: any }) =>
+      apiService.employees.updateEmployee(id, employeeData),
+    onSuccess: (_, { id }) => {
+      queryClient.invalidateQueries({ queryKey: ['employees'] });
+    },
+    ...defaultMutationOptions,
+  });
+};
+
+export const useDeleteEmployee = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) => apiService.employees.deleteEmployee(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['employees'] });
+    },
+    ...defaultMutationOptions,
+  });
+};
+
 // Users Hooks
 export const useUsers = (filters?: any, options?: UseQueryOptions<User[], APIError>) => {
   return useQuery<User[], APIError>({
@@ -499,6 +544,12 @@ const apiHooks = {
   useMyOffers,
   useCreateOffer,
   useUpdateOffer,
+
+  // Employees Hooks
+  useEmployees,
+  useEmployee,
+  useUpdateEmployee,
+  useDeleteEmployee,
 
   // Users
   useUsers,

@@ -56,7 +56,6 @@ const Footer = () => {
               {[
                 { name: "HR Login", path: "/admin/login" },
                 { name: "Dashboard", path: "/admin/dashboard" },
-                { name: "Manage Jobs", path: "/admin/jobs" },
               ].map((link) => (
                 <li key={link.name}>
                   <a

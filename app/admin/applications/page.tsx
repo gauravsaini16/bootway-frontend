@@ -37,7 +37,7 @@ const statusOptions = [
   { value: 'under-review', label: 'Under Review' },
   { value: 'shortlisted', label: 'Shortlisted' },
   { value: 'interview', label: 'Interview' },
-  { value: 'offer', label: 'Offer' },
+  { value: 'selected', label: 'Selected' },
   { value: 'rejected', label: 'Rejected' },
 ];
 
@@ -70,8 +70,8 @@ export default function AdminApplications() {
               Review and manage candidate applications
             </p>
           </div>
-          <Button asChild variant="ghost">
-            <Link href="/admin/dashboard" className="flex items-center text-white">
+          <Button asChild variant="secondary">
+            <Link href="/admin/dashboard" className="flex items-center">
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back
             </Link>
