@@ -20,7 +20,7 @@ const PageContainer = ({ children, className = "" }: PageContainerProps) => {
   }
 
   return (
-    <main className={`min-h-screen ${className}`}>
+    <main className={`min-h-screen pt-[72px] ${className}`}>
       {children}
     </main>
   );

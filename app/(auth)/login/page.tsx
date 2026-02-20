@@ -10,11 +10,9 @@ export default function LoginPage() {
         <div className="min-h-screen flex items-center justify-center bg-muted/30 p-4">
             <div className="w-full max-w-4xl">
                 <div className="text-center mb-8">
-                    <Link href="/" className="inline-block mb-8">
-                        <div className="flex items-center justify-center">
-                            <span className="text-4xl font-bold text-primary">Boot</span>
-                            <span className="text-4xl font-bold text-accent">Way</span>
-                        </div>
+                    <Link href="/" className="inline-block mb-8" aria-label="BootWay Home">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src="/assets/images/logo/logo-b-re.png" alt="BootWay" className="h-10 w-auto mx-auto" />
                     </Link>
                     <h1 className="text-3xl font-bold text-foreground mb-2">Welcome Back</h1>
                     <p className="text-muted-foreground">Please select your login type to continue</p>

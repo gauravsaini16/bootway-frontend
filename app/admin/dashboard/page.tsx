@@ -92,25 +92,15 @@ export default function AdminDashboard() {
 
   return (
     <PageContainer>
-      {/* Header */}
       <section className="bg-hero-gradient py-8 md:py-10">
         <div className="container-custom">
-          <div className="flex justify-between items-center">
-            <div>
-              <h1 className="text-2xl md:text-3xl font-bold text-white mb-2">
-                HR Dashboard
-              </h1>
-              <p className="text-white/80">
-                Welcome back, {user?.fullName || 'Admin'}! Here&apos;s an overview of your recruitment pipeline.
-              </p>
-            </div>
-            <Button
-              variant="secondary"
-              onClick={handleLogout}
-              className="flex items-center align items-center"
-            >
-              Logout
-            </Button>
+          <div>
+            <h1 className="text-2xl md:text-3xl font-bold text-white mb-2">
+              HR Dashboard
+            </h1>
+            <p className="text-white/80">
+              Welcome back, {user?.fullName || 'Admin'}! Here&apos;s an overview of your recruitment pipeline.
+            </p>
           </div>
         </div>
       </section>

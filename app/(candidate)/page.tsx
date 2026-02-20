@@ -70,7 +70,7 @@ export default function Home() {
       </section>
 
       {/* Filters */}
-      <section className="py-6 bg-white border-b border-border sticky top-16 z-40">
+      <section className="py-6 bg-white dark:bg-gray-900 border-b border-border sticky top-16 z-40">
         <div className="container-custom">
           <div className="flex flex-col lg:flex-row gap-4">
             {/* Search */}

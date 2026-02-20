@@ -71,8 +71,8 @@ function CandidateSignupForm() {
                 <Card className="shadow-xl border-border/50">
                     <CardHeader className="text-center pb-2">
                         <div className="flex justify-center mb-4">
-                            <span className="text-3xl font-bold text-primary">Boot</span>
-                            <span className="text-3xl font-bold text-accent">Way</span>
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img src="/assets/images/logo/logo-b-re.png" alt="BootWay" className="h-10 w-auto" />
                         </div>
                         <CardTitle className="text-2xl">Create Account</CardTitle>
                         <CardDescription>

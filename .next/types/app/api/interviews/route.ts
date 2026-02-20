@@ -1,4 +1,4 @@
-// File: C:\Users\Gaurav Saini\OneDrive\Desktop\BootwayProject\app\api\interviews\route.ts
+// File: C:\Users\Gaurav Saini\OneDrive\Desktop\bootway final\BootwayProject\app\api\interviews\route.ts
 import * as entry from '../../../../../app/api/interviews/route.js'
 import type { NextRequest } from 'next/server.js'
 
