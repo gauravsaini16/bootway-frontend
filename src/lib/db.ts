@@ -7,12 +7,6 @@ import '../models/Application';
 import '../models/Interview';
 import '../models/Employee';
 
-const MONGO_URI = process.env.MONGO_URI!;
-
-if (!MONGO_URI) {
-    throw new Error('Please define the MONGO_URI environment variable');
-}
-
 // Cache the connection to avoid reconnecting on every serverless invocation
 let cached = (global as any).__mongoose;
 
@@ -21,12 +15,16 @@ if (!cached) {
 }
 
 export async function connectDB() {
+    if (!process.env.MONGO_URI) {
+        throw new Error('Please define the MONGO_URI environment variable');
+    }
+
     if (cached.conn) {
         return cached.conn;
     }
 
     if (!cached.promise) {
-        cached.promise = mongoose.connect(MONGO_URI, {
+        cached.promise = mongoose.connect(process.env.MONGO_URI, {
             bufferCommands: false,
         });
     }
