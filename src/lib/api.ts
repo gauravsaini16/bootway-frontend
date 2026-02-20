@@ -3,7 +3,7 @@
 
 // Helper to resolve Base URL
 const getBaseUrl = () => {
-  let url = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+  let url = process.env.NEXT_PUBLIC_API_URL || '/api';
   // Remove trailing slashes
   url = url.replace(/\/+$/, '');
   // Append /api if not present
