@@ -3,11 +3,27 @@
 
 // Helper to resolve Base URL
 const getBaseUrl = () => {
-  let url = process.env.NEXT_PUBLIC_API_URL || '/api';
+  let url = process.env.NEXT_PUBLIC_API_URL;
+
+  if (!url) {
+    // If no explicit API URL, dynamically build it based on the environment
+    if (typeof window !== 'undefined') {
+      // Browser can use relative paths
+      url = '/api';
+    } else if (process.env.NEXT_PUBLIC_VERCEL_URL) {
+      // Vercel Serverless Functions need absolute URLs
+      url = `https://${process.env.NEXT_PUBLIC_VERCEL_URL}/api`;
+    } else {
+      // Local development fallback
+      url = 'http://localhost:3000/api';
+    }
+  }
+
   // Remove trailing slashes
   url = url.replace(/\/+$/, '');
-  // Append /api if not present
-  if (!url.endsWith('/api')) {
+
+  // Ensure we append /api if it isn't already pointing directly to the api endpoint
+  if (!url.endsWith('/api') && typeof window === 'undefined') {
     url += '/api';
   }
   return url;
